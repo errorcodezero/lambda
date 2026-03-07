@@ -5,7 +5,7 @@ EXE = lambda
 SRC = main.c
 OBJ = $(SRC:%.c=$(BUILD_DIR)/%.o)
 
-CFLAGS += -std=c11 -Wall -Wextra -Werror -pedantic
+CFLAGS += -std=c23 -Wall -Wextra -Werror -pedantic
 # CC = gcc
 
 all: debug
