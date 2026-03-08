@@ -5,16 +5,18 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-#define MEMORY_WIDTH 2^24
+#define MEMORY_WIDTH 16777216
 #define MEMORY_MAX_VAL MEMORY_WIDTH - 1
 #define MEMORY_MIN_VAL 0
 
+typedef struct Memory Memory;
+
 typedef struct Memory {
   uint8_t data[MEMORY_WIDTH];
-  uint8_t (*get)(struct Memory * self);
+  uint8_t (*get)(Memory * self, uint32_t index);
 } Memory;
 
-struct Memory * init_memory(bool debug);
-uint8_t memory_struct_get(struct Memory * self);
+Memory init_memory();
+uint8_t memory_struct_get(Memory * self, uint32_t index);
 
 #endif  // INCLUDE_SRC_MEMORY_H_

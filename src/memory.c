@@ -1,9 +1,14 @@
 #include "memory.h"
 #include <stdbool.h>
 
-struct Memory* init_memory(bool debug) {
-  Memory* memory = calloc(1, sizeof(Memory));
-  memory->get = memory_struct_get;
+uint8_t memory_struct_get(Memory *self, uint32_t index) {
+  return self->data[index];
+}
+
+Memory init_memory() {
+  Memory memory = {
+    .get = memory_struct_get
+  };
 
   return memory;
 }
