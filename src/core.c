@@ -28,7 +28,6 @@ uint8_t core_register_get_ry(CoreRegister *self) {
 #endif /* if (__STDC__ENDIAN__NATIVE__ == __STDC_ENDIAN_LITTLE) */
 }
 
-
 uint16_t core_register_get_rxy(CoreRegister *self) {
   return self->reg_data.data;
 }
