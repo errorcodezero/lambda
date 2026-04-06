@@ -16,7 +16,7 @@ Cool fantasy console that has
 
 ## Instructions
 
-This is in hexadecimal and for simplicity, I'm avoiding prefixing all values with "0x". The first value indicates how many bytes precede it for a given instruction. The second indicates an enumerator. The repetition of a character that is not hexadecimal(0-F) does not necessarily indicate the same constant.
+This is in hexadecimal and for simplicity, I'm avoiding prefixing all values with "0x". The first value modulus 5 indicates how many bytes precede it for a given instruction. The second indicates an enumerator. The repetition of a character that is not hexadecimal(0-F) does not necessarily indicate the same constant.
 
 ### 1 Byte Instructions
 
@@ -30,13 +30,19 @@ This is in hexadecimal and for simplicity, I'm avoiding prefixing all values wit
 - `INC` - Increment - `12 RI`
 - `DEC` - Decrement - `13 RI`
 - `TJMP` - Tiny Jump - `14 II`
-- `MOVE` - Move - `15 RR`
-- `ADDR` - Add Registers - `16 RR`**
-- `SUBR` - Subtract Registers - `17 RR`**
-- `XORR` - Bitwise XOR Registers - `18 RR`**
-- `ANDR` - Bitwise AND Registers - `19 RR`**
-- `NOTR` - Bitwise NOT Registers - `1A RR`**
-- `ORR` - Bitwise OR Registers - `1B RR`**
+- `LSHFT` - Bit Shift Left Registers - `15 SR`
+- `RSHFT` - Bit Shift Right Registers - `16 SR`
+- `ADDR` - Add Registers - `17 RR`**
+- `SUBR` - Subtract Registers - `18 RR`**
+- `XORR` - Bitwise XOR Registers - `19 RR`**
+- `ANDR` - Bitwise AND Registers - `1A RR`**
+- `NOTR` - Bitwise NOT Registers - `1B RR`**
+- `ORR` - Bitwise OR Registers - `1C RR`**
+- `NORR` - Bitwise NOR Registers - `1D RR`**
+- `NANDR` - Bitwise NAND Registers - `1E RR`**
+- `XNORR` - Bitwise XNOR Registers - `1F RR`**
+- `PSHI` - Push Immediate Stack - `60 II`
+- `POP` - Pop/Peek Stack - `61 SR` - non-zero value for `S` will mean that it will peek
 
 ### 3 Byte Instructions
 
@@ -46,8 +52,9 @@ This is in hexadecimal and for simplicity, I'm avoiding prefixing all values wit
 - `RJMPI` - Relative Jump Indirect - `23 MM MM`
 - `CJMP` - Computed Jump - `24 SR MM`*
 - `CCLL` - Computed Call - `25 SR MM`*
-- `ADDR` - Add Registers - `26 SR RR`**\*
-- `SUBR` - Subtract Registers - `27 SR RR`**\*
+- `ADDR` - Add Registers - `26 SR RR`\*\*\*
+- `SUBR` - Subtract Registers - `27 SR RR`\*\*\*
+- `XANOR` - Bitwise AND/OR/XOR/NAND/NOR Registers - `28 SR RR`** - 0 for `S` will make this bitwise AND, 1 will make this bitwise OR, 2 will make this bitwise XOR, 3 will make this bitwise NAND, 4 will make this bitwise NOR, 5 will make this bitwise XNOR
 
 ### 4 Byte Instructions
 
@@ -64,4 +71,4 @@ This is in hexadecimal and for simplicity, I'm avoiding prefixing all values wit
 
 *nonzero value for `S` will make this indirect, carry, or borrow depending on the context
 **ordering for expressions is where the result will be stored followed by the operands where in the case of only two values, the first operand is also where the result will be stored
-***both the top and bottom asterisks apply
+*\*\*both first and second asterisks apply
