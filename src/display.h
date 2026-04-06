@@ -12,7 +12,7 @@ typedef union Color {
   uint8_t raw[3];
 } Color;
 
-#define COLOR_WHITE { .raw = {0xFF, 0xFF, 0xFF} };
-#define COLOR_BLACK { .raw = {0, 0, 0} };
+#define COLOR_WHITE {.raw = {0xFF, 0xFF, 0xFF}};
+#define COLOR_BLACK {.raw = {0, 0, 0}};
 
-#endif  // INCLUDE_SRC_DISPLAY_H_
+#endif // INCLUDE_SRC_DISPLAY_H_
