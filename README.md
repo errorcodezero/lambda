@@ -46,7 +46,7 @@ This is in hexadecimal and for simplicity, I'm avoiding prefixing all values wit
 - `RJMPI` - Relative Jump Indirect - `23 MM MM`
 - `CJMP` - Computed Jump - `24 SR MM`*
 - `CCLL` - Computed Call - `25 SR MM`*
-- `ADDR` - Add Registers - `26 SR RR`***
+- `ADDR` - Add Registers - `26 SR RR`**\*
 - `SUBR` - Subtract Registers - `27 SR RR`**\*
 
 ### 4 Byte Instructions
