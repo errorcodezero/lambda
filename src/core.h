@@ -6,13 +6,7 @@
 typedef struct CoreRegister CoreRegister;
 
 typedef struct CoreRegister {
-  union {
-    struct {
-      uint8_t d1;
-      uint8_t d2;
-    };
-    uint16_t data;
-  } reg_data;
+  uint16_t data;
   uint8_t (*get_rx)(CoreRegister *self);
   uint8_t (*get_ry)(CoreRegister *self);
   uint16_t (*get_r)(CoreRegister *self);

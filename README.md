@@ -19,6 +19,7 @@ Cool fantasy console that has
 - 256 interrupts
 - 16777217 bytes of memory
 - 8 mutexes able to be supported
+- Little-endian
 
 ## Instructions
 
@@ -62,9 +63,9 @@ This is in hexadecimal and for simplicity, I'm avoiding prefixing all values wit
 - `RJMPIGI` - Relative Jump If Greater Indirect - `25 MM MM`
 - `RJMPILD` - Relative Jump If Lesser Direct - `26 MM MM`
 - `RJMPILI` - Relative Jump If Lesser Indirect - `27 MM MM`
-- `ADDR` - Add Registers - `2A SR RR`\*\*\*
-- `SUBR` - Subtract Registers - `2B SR RR`\*\*\*
-- `XANOR` - Bitwise AND/OR/XOR/NAND/NOR Registers - `2C SR RR`** - 0 for `S` will make this bitwise AND, 1 will make this bitwise OR, 2 will make this bitwise XOR, 3 will make this bitwise NAND, 4 will make this bitwise NOR, 5 will make this bitwise XNOR
+- `ADDRR` - Add Registers - `2A SR RR`\*\*\*
+- `SUBRR` - Subtract Registers - `2B SR RR`\*\*\*
+- `XANOR` - Bitwise AND/OR/XOR/NAND/NOR/XNOR Registers - `2C SR RR`** - 0 for `S` will make this bitwise AND, 1 will make this bitwise OR, 2 will make this bitwise XOR, 3 will make this bitwise NAND, 4 will make this bitwise NOR, 5 will make this bitwise XNOR
 
 ### 4 Byte Instructions
 
@@ -77,11 +78,11 @@ This is in hexadecimal and for simplicity, I'm avoiding prefixing all values wit
 - `AJMPIGI` - Absolute Jump If Greater Indirect - `36 MM MM MM`
 - `AJMPILD` - Absolute Jump If Lesser Direct - `37 MM MM MM`
 - `AJMPILI` - Absolute Jump If Lesser Indirect - `38 MM MM MM`
-- `LDMD` - Relative Load - `39 SR MM MM`*
+- `RLD` - Relative Load - `39 SR MM MM`*
 
 ### 5-byte instructions
 
-- `LDMD` - Absolute Load - `40 SR MM MM MM`*
+- `ALD` - Absolute Load - `40 SR MM MM MM`*
 
 *nonzero value for `S` will make this indirect, carry, or borrow depending on the context
 **ordering for expressions is where the result will be stored followed by the operands where in the case of only two values, the first operand is also where the result will be stored
