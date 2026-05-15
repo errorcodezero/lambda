@@ -96,8 +96,11 @@ This is in hexadecimal and for simplicity, I'm avoiding prefixing all values wit
 - `MMUTMAI` - Modify Mutex Memory Absolute with Index - `70 II MM MM MM MM MM MM`*\*\*\*
 
 *nonzero value for `S` will make this indirect, carry, or borrow depending on the context
+
 **ordering for expressions is where the result will be stored followed by the operands where in the case of only two values, the first operand is also where the result will be stored
+
 *\*\*both first and second asterisks apply
+
 *\*\*\*Arguments are from the mutex table
 
 ## Mutexes
