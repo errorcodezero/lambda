@@ -18,12 +18,12 @@ Cool fantasy console that has
 - 24-bit data bus
 - 256 interrupts
 - 16777217 bytes of memory
-- 8 mutexes able to be supported
+- 4 mutexes per core
 - Little-endian
 
 ## Instructions
 
-This is in hexadecimal and for simplicity, I'm avoiding prefixing all values with "0x". The first value modulus 5 indicates how many bytes precede it for a given instruction. The second indicates an enumerator. The repetition of a character that is not hexadecimal(0-F) does not necessarily indicate the same constant.
+This is in hexadecimal and for simplicity, I'm avoiding prefixing all values with "0x". The first value modulus 9 indicates how many bytes precede it for a given instruction. The second indicates an enumerator. The repetition of a character that is not hexadecimal(0-F) does not necessarily indicate the same constant.
 
 ### 1 Byte Instructions
 
@@ -48,10 +48,11 @@ This is in hexadecimal and for simplicity, I'm avoiding prefixing all values wit
 - `XNORR` - Bitwise XNOR Registers - `1D RR`**
 - `PSHI` - Push Immediate Stack - `1E II`
 - `POP` - Pop/Peek Stack - `1F SR` - 0 for stack will pop 8-bit value, 1 for stack will pop 16-bit value, 2 for stack will peep 8-bit value, and 4 for stack will peep 16-bit value.
-- `CMP` - Compare Registers - `60 RR`
-- `CJIZ` - Computed Jump If Zero - `61 SR`*
-- `CJIG` - Computed Jump If Greater- `62 SR`*
-- `CJIL` - Computed Jump If Lesser- `63 SR`*
+- `CMP` - Compare Registers - `A0 RR`
+- `CJIZ` - Computed Jump If Zero - `A1 SR`*
+- `CJIG` - Computed Jump If Greater- `A2 SR`*
+- `CJIL` - Computed Jump If Lesser- `A3 SR`*
+- `DMUTI` - Disable Mutex Index - `A4 II`
 
 ### 3 Byte Instructions
 
@@ -66,6 +67,7 @@ This is in hexadecimal and for simplicity, I'm avoiding prefixing all values wit
 - `ADDRR` - Add Registers - `2A SR RR`\*\*\*
 - `SUBRR` - Subtract Registers - `2B SR RR`\*\*\*
 - `XANOR` - Bitwise AND/OR/XOR/NAND/NOR/XNOR Registers - `2C SR RR`** - 0 for `S` will make this bitwise AND, 1 will make this bitwise OR, 2 will make this bitwise XOR, 3 will make this bitwise NAND, 4 will make this bitwise NOR, 5 will make this bitwise XNOR
+- `MMUTMOI` - Modify Mutex Mode with Index- `2D II MM`
 
 ### 4 Byte Instructions
 
@@ -79,11 +81,36 @@ This is in hexadecimal and for simplicity, I'm avoiding prefixing all values wit
 - `AJMPILD` - Absolute Jump If Lesser Direct - `37 MM MM MM`
 - `AJMPILI` - Absolute Jump If Lesser Indirect - `38 MM MM MM`
 - `RLD` - Relative Load - `39 SR MM MM`*
+- `DMUTM` - Delete Mutex with Memory - `C0 MM MM MM` - If the given memory address is within range of a mutex, it nullifies that mutex within the mutex table.
 
-### 5-byte instructions
+### 5-byte Instructions
 
 - `ALD` - Absolute Load - `40 SR MM MM MM`*
+
+### 8-byte Instructions
+
+- `MMUTMI` - Modify Mutex Memory with Index - `70 II MM MM MM MM MM MM` - Various arguments are the different parts of a mutex table entry.
 
 *nonzero value for `S` will make this indirect, carry, or borrow depending on the context
 **ordering for expressions is where the result will be stored followed by the operands where in the case of only two values, the first operand is also where the result will be stored
 *\*\*both first and second asterisks apply
+
+## Mutexes
+
+A mutex table is stored within the CPU allowing it to store up to 16 mutexes and 4 per core. Each mutex is stored as such:
+
+---------------------------------------------------
+| Index | Memory Start | Memory End | Core | Mode |
+---------------------------------------------------
+|  II   |   MM MM MM   |  MM MM MM  |  SS  |  RT  |
+---------------------------------------------------
+
+- `T` toggles the mutex where 0 is disabled and 1 is enabled.
+- `R` toggles interrupts where 0 is for triggering spinlocks and 1 is for triggering interrupts.
+
+## Interrupts
+
+These are various interrupts that can be triggered by different actions:
+- `00` - Reset
+- `01` - Non-Maskable
+- `02` - Mutex Permisson Failure

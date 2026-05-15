@@ -1,4 +1,5 @@
 #include "core.h"
+#include "computer.h"
 #include <stdbit.h>
 
 CoreRegister init_core_register() {
@@ -36,3 +37,5 @@ uint16_t core_register_get_r(CoreRegister *self) {
   return ((((uint16_t) self->get_rx()) << 8) + self->get_ry());
 #endif 
 }
+
+void core_step(Core *self) {}
