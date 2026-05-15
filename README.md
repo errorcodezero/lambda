@@ -99,11 +99,9 @@ This is in hexadecimal and for simplicity, I'm avoiding prefixing all values wit
 
 A mutex table is stored within the CPU allowing it to store up to 16 mutexes and 4 per core. Each mutex is stored as such:
 
-| ----------------------------------------------- |
 | Index | Memory Start | Memory End | Core | Mode |
 | ----- | ------------ | ---------- | ---- | -----|
 |  II   |   MM MM MM   |  MM MM MM  |  SS  |  RT  |
-| ----------------------------------------------- |
 
 - `T` toggles the mutex where 0 is disabled and 1 is enabled.
 - `R` toggles interrupts where 0 is for triggering spinlocks and 1 is for triggering interrupts.
