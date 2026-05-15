@@ -81,19 +81,24 @@ This is in hexadecimal and for simplicity, I'm avoiding prefixing all values wit
 - `AJMPILD` - Absolute Jump If Lesser Direct - `37 MM MM MM`
 - `AJMPILI` - Absolute Jump If Lesser Indirect - `38 MM MM MM`
 - `RLD` - Relative Load - `39 SR MM MM`*
-- `DMUTM` - Delete Mutex with Memory - `C0 MM MM MM` - If the given memory address is within range of a mutex, it nullifies that mutex within the mutex table.
+- `DMUTAM` - Delete Mutex Absolute Memory - `C0 MM MM MM` - If the given memory address is within range of a mutex, it nullifies that mutex within the mutex table.
 
 ### 5-byte Instructions
 
 - `ALD` - Absolute Load - `40 SR MM MM MM`*
 
-### 8-byte Instructions
+### 6 Byte Instructions
 
-- `MMUTMI` - Modify Mutex Memory with Index - `70 II MM MM MM MM MM MM` - Various arguments are the different parts of a mutex table entry.
+- `MMUTMRI` - Modify Mutex Memory Relative with Index - `50 II MM MM MM MM`*\*\*\*
+
+### 8 Byte Instructions
+
+- `MMUTMAI` - Modify Mutex Memory Absolute with Index - `70 II MM MM MM MM MM MM`*\*\*\*
 
 *nonzero value for `S` will make this indirect, carry, or borrow depending on the context
 **ordering for expressions is where the result will be stored followed by the operands where in the case of only two values, the first operand is also where the result will be stored
 *\*\*both first and second asterisks apply
+*\*\*\*Arguments are from the mutex table
 
 ## Mutexes
 
