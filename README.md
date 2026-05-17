@@ -89,11 +89,11 @@ This is in hexadecimal and for simplicity, I'm avoiding prefixing all values wit
 
 ### 6 Byte Instructions
 
-- `MMUTMRI` - Modify Mutex Memory Relative with Index - `50 II MM MM MM MM`*\*\*\*
+- `MMUTMRI` - Modify Mutex Memory Relative with Index - `50 II MM MM MM MM`\*\*\*\*
 
 ### 8 Byte Instructions
 
-- `MMUTMAI` - Modify Mutex Memory Absolute with Index - `70 II MM MM MM MM MM MM`*\*\*\*
+- `MMUTMAI` - Modify Mutex Memory Absolute with Index - `70 II MM MM MM MM MM MM`\*\*\*\*
 
 *nonzero value for `S` will make this indirect, carry, or borrow depending on the context
 
@@ -120,3 +120,4 @@ These are various interrupts that can be triggered by different actions:
 - `00` - Reset
 - `01` - Non-Maskable
 - `02` - Mutex Permisson Failure
+- `03` - Signal

@@ -14,12 +14,13 @@ typedef struct CoreRegister {
 
 typedef struct Core {
   uint32_t instruction_pointer;
-  CoreRegister registers[16];
+  CoreRegister registers[13];
   uint8_t status;
   uint8_t zero;
   uint8_t bank;
   uint16_t stack_ptr;
   uint16_t base_ptr;
+  uint8_t interrupt_vector_table[12];
 } Core;
 
 uint8_t core_register_get_rx(CoreRegister *self);

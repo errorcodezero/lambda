@@ -38,4 +38,6 @@ uint16_t core_register_get_r(CoreRegister *self) {
 #endif 
 }
 
-void core_step(Core *self) {}
+void core_step(Core *self) {
+	
+}
