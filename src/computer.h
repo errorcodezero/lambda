@@ -3,18 +3,15 @@
 
 #include "core.h"
 #include "display.h"
+#include "instructions.h"
 #include "memory.h"
 #include <stdint.h>
-
-typedef struct Computer Computer;
-
-typedef void (*InstructionHandler)(Computer *computer);
 
 typedef struct Computer {
   Core cores[4];
   Color display[500][300];
   Memory *memory;
-  InstructionHandler instructions[0x100];
+  InstructionHandler *instructions;
 } Computer;
 
 Computer computer_init();

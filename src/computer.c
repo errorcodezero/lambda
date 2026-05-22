@@ -1,9 +1,11 @@
 #include "computer.h"
+#include "instructions.h"
 
 Computer computer_init() {
 	Computer computer = {
 		.cores = {{}, {}, {}, {}}
 	};
+	computer.instructions = get_instructions();
 
 	return computer;
 }

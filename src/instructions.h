@@ -1,6 +1,8 @@
 #ifndef INCLUDE_SRC_INSTRUCTIONS_H_
 #define INCLUDE_SRC_INSTRUCTIONS_H_
 
+typedef struct Computer Computer;
+
 typedef enum Instructions {
   // 1 Byte Instructions
   I_HLT = 0x00,
@@ -65,5 +67,8 @@ typedef enum Instructions {
   // 8 Byte Instructions
   I_MMUTMAI = 0x70
 } Instructions;
+
+typedef void (*InstructionHandler)(Computer *computer);
+InstructionHandler *get_instructions();
 
 #endif // INCLUDE_SRC_INSTRUCTIONS_H_

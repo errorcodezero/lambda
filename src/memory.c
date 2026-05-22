@@ -7,7 +7,6 @@ uint8_t memory_struct_get(Memory *self, uint32_t index) {
 
 Memory init_memory() {
   Memory memory = {
-    .get = memory_struct_get
   };
 
   return memory;
