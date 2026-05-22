@@ -2,11 +2,11 @@
 #define INCLUDE_SRC_INSTRUCTIONS_H_
 
 typedef enum Instructions {
-  // 1 Byte
+  // 1 Byte Instructions
   I_HLT = 0x00,
   I_RET = 0x01,
 
-  // 2 Byte
+  // 2 Byte Instructions
   I_INC = 0x10,
   I_DEC = 0x11,
   I_TJMP = 0x12,
@@ -23,12 +23,13 @@ typedef enum Instructions {
   I_XNORR = 0x1D,
   I_PSHI = 0x1E,
   I_POP = 0x1F,
-  I_CMP = 0x60,
-  I_CJIZ = 0x61,
-  I_CJIG = 0x62,
-  I_CJIL = 0x63,
+  I_CMP = 0xA0,
+  I_CJIZ = 0xA1,
+  I_CJIG = 0xA2,
+  I_CJIL = 0xA3,
+  I_DMUTI = 0xA4,
 
-  // 3 Byte
+  // 3 Byte Instructions
   I_ADDB = 0x20,
   I_SDDB = 0x21,
   I_RJMPIZD = 0x22,
@@ -36,12 +37,13 @@ typedef enum Instructions {
   I_RJMPIGD = 0x24,
   I_RJMPIGI = 0x25,
   I_RJMPILD = 0x26,
-  I_RJMPIL = 0x27,
+  I_RJMPILI = 0x27,
   I_ADDRR = 0x2A,
   I_SUBRR = 0x2B,
   I_XANOR = 0x2C,
+  I_MMUTMOI = 0x2D,
 
-  // 4 Byte
+  // 4 Byte Instructions
   I_ADDI = 0x30,
   I_SUBI = 0x31,
   I_LDI = 0x32,
@@ -52,9 +54,16 @@ typedef enum Instructions {
   I_AJMPILD = 0x37,
   I_AJMPILI = 0x38,
   I_RLD = 0x39,
+  I_DMUTAM = 0xC0,
 
-  // 5 Byte
+  // 5 Byte Instructions
   I_ALD = 0x40,
+
+  // 6 Byte Instructions
+  I_MMUTMRI = 0x50,
+
+  // 8 Byte Instructions
+  I_MMUTMAI = 0x70
 } Instructions;
 
 #endif // INCLUDE_SRC_INSTRUCTIONS_H_

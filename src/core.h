@@ -26,6 +26,5 @@ typedef struct Core {
 uint8_t core_register_get_rx(CoreRegister *self);
 uint8_t core_register_get_ry(CoreRegister *self);
 uint16_t core_register_get_r(CoreRegister *self);
-void core_step(Core *self);
 
 #endif // INCLUDE_SRC_CORE_H_
