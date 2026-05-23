@@ -69,6 +69,6 @@ typedef enum Instructions {
 } Instructions;
 
 typedef void (*InstructionHandler)(Computer *computer);
-InstructionHandler *get_instructions();
+void setup_instructions(Computer *computer);
 
 #endif // INCLUDE_SRC_INSTRUCTIONS_H_

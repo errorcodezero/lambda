@@ -1,9 +1,12 @@
 #include "instructions.h"
+#include "computer.h"
+#include <assert.h>
 
-InstructionHandler *get_instructions() {
-	InstructionHandler instructions[0x100];
+InstructionHandler instructions[0x100];
 
-	// for each new instruction, add their function pointer to the array
+void setup_instructions(Computer * computer) {
+	// add instructions here
 
-	return instructions;
+	assert(computer != 0);
+	// computer->instructions = instructions;
 }
