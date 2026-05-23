@@ -1,18 +1,6 @@
 #include "core.h"
-#include "computer.h"
 #include <stdbit.h>
 #include <stdio.h>
-
-CoreRegister init_core_register() {
-  CoreRegister reg = {
-	  .data = 0,
-      .get_rx = core_register_get_rx,
-      .get_ry = core_register_get_ry,
-      .get_r = core_register_get_r,
-  };
-
-  return reg;
-}
 
 uint8_t core_register_get_rx(CoreRegister *self) {
 #if (__STDC__ENDIAN__NATIVE__ == __STDC_ENDIAN_LITTLE)

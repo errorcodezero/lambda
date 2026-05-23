@@ -16,13 +16,16 @@ typedef struct Computer {
   Core cores[COMPUTER_CORES];
   Color display[DISPLAY_WIDTH][DISPLAY_HEIGHT];
   uint8_t memory[MEMORY_WIDTH];
-  InstructionHandler *instructions;
+  InstructionHandler instructions[0x100];
 } Computer;
 
-Computer computer_init();
+void computer_init(Computer *self);
+void computer_start(Computer *self);
 void computer_reset(Computer *self);
 void computer_step_core(Computer *self, Core *core);
+void computer_step(Computer *self);
 uint8_t memory_get(Computer *self, uint32_t index);
+uint32_t memory_get_24(Computer *self, uint32_t index);
 void computer_print(Computer *self);
 
 #endif // INCLUDE_SRC_COMPUTER_H_
