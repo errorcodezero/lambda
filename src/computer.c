@@ -10,9 +10,10 @@ void computer_init(Computer *self) {
 }
 
 void computer_start(Computer *self) {
-  self->cores[0].instruction_pointer = memory_get_24(self, 0);
-  self->cores[0].awake = true;
   printf("COMPUTER START\n");
+  self->cores[0].instruction_pointer = memory_get_24(self, 0);
+  printf("CORE 0 LOAD INSTRUCTION VECTOR 0x%X\n", memory_get_24(self, 0));
+  self->cores[0].awake = true;
   printf("CORE 0 AWAKE\n");
 }
 
