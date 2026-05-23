@@ -1,6 +1,7 @@
 #ifndef INCLUDE_SRC_INSTRUCTIONS_H_
 #define INCLUDE_SRC_INSTRUCTIONS_H_
 
+#include "core.h"
 typedef struct Computer Computer;
 
 typedef enum Instructions {
@@ -68,7 +69,8 @@ typedef enum Instructions {
   I_MMUTMAI = 0x70
 } Instructions;
 
-typedef void (*InstructionHandler)(Computer *computer);
+typedef void (*InstructionHandler)(Computer *computer, Core *core);
 void setup_instructions(Computer *computer);
+void HLT_handler(Computer *computer, Core *core);
 
 #endif // INCLUDE_SRC_INSTRUCTIONS_H_

@@ -18,13 +18,14 @@ typedef struct Core {
   uint8_t status;
   uint8_t zero;
   uint8_t bank;
-  uint16_t stack_ptr;
-  uint16_t base_ptr;
+  uint16_t stack_pointer;
+  uint16_t base_pointer;
   uint8_t interrupt_vector_table[12];
 } Core;
 
 uint8_t core_register_get_rx(CoreRegister *self);
 uint8_t core_register_get_ry(CoreRegister *self);
 uint16_t core_register_get_r(CoreRegister *self);
+void core_print(Core *self);
 
 #endif // INCLUDE_SRC_CORE_H_
