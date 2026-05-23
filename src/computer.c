@@ -12,18 +12,21 @@ void computer_init(Computer *self) {
 void computer_start(Computer *self) {
   self->cores[0].instruction_pointer = memory_get_24(self, 0);
   self->cores[0].awake = true;
+  printf("COMPUTER START\n");
+  printf("CORE 0 AWAKE\n");
 }
 
 void computer_reset(Computer *self) { memset(self, 0, sizeof(Computer)); }
 
-void computer_step_core(Computer *self, Core *core) {
-  if (core->awake)
-    self->instructions[memory_get(self, core->instruction_pointer)](self, core);
+void computer_step_core(Computer *self, uint8_t core_id) {
+  if (self->cores[core_id].awake)
+    self->instructions[memory_get(
+        self, self->cores[core_id].instruction_pointer)](self, core_id);
 }
 
 void computer_step(Computer *self) {
   for (uint8_t i = 0; i < COMPUTER_CORES; i++)
-    computer_step_core(self, &self->cores[i]);
+    computer_step_core(self, i);
 }
 
 uint8_t memory_get(Computer *self, uint32_t index) {

@@ -69,8 +69,8 @@ typedef enum Instructions {
   I_MMUTMAI = 0x70
 } Instructions;
 
-typedef void (*InstructionHandler)(Computer *computer, Core *core);
+typedef void (*InstructionHandler)(Computer *computer, uint8_t core_id);
 void setup_instructions(Computer *computer);
-void HLT_handler(Computer *computer, Core *core);
+void HLT_handler(Computer *computer, uint8_t core_id);
 
 #endif // INCLUDE_SRC_INSTRUCTIONS_H_

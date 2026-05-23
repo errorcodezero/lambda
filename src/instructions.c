@@ -9,9 +9,8 @@ void setup_instructions(Computer *computer) {
   computer->instructions[I_HLT] = HLT_handler;
 }
 
-void HLT_handler(Computer *computer, Core *core) {
-  core->awake = false;
-  printf("CORE HALTED\n");
+void HLT_handler(Computer *computer, uint8_t core_id) {
+  computer->cores[core_id].awake = false;
+  printf("CORE %d HALTED\n", core_id);
   assert(computer != 0);
-  assert(core != 0);
 }

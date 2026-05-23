@@ -22,7 +22,7 @@ typedef struct Computer {
 void computer_init(Computer *self);
 void computer_start(Computer *self);
 void computer_reset(Computer *self);
-void computer_step_core(Computer *self, Core *core);
+void computer_step_core(Computer *self, uint8_t core_id);
 void computer_step(Computer *self);
 uint8_t memory_get(Computer *self, uint32_t index);
 uint32_t memory_get_24(Computer *self, uint32_t index);
