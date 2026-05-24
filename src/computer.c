@@ -40,6 +40,23 @@ uint32_t memory_get_24(Computer *self, uint32_t index) {
          ((uint32_t)self->memory[index + 2] << 16);
 }
 
+uint16_t memory_get_12(Computer *self, uint32_t index) {
+  return ((uint16_t)self->memory[index]) |
+         (((uint16_t)self->memory[index + 1] & 0x0F) << 8);
+}
+
+uint16_t memory_get_16(Computer *self, uint32_t index) {
+  return ((uint16_t)self->memory[index]) |
+         ((uint16_t)self->memory[index + 1] << 8);
+}
+
+uint32_t memory_get_32(Computer *self, uint32_t index) {
+  return ((uint32_t)self->memory[index]) |
+         ((uint32_t)self->memory[index + 1] << 8) |
+         ((uint32_t)self->memory[index + 2] << 16) |
+         ((uint32_t)self->memory[index + 3] << 24);
+}
+
 void computer_print(Computer *self) {
   for (uint8_t i = 0; i < COMPUTER_CORES; i++) {
     printf("--- CORE %d ---\n", i);

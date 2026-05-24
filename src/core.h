@@ -4,15 +4,9 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-typedef struct CoreRegister CoreRegister;
-
-typedef struct CoreRegister {
-  uint16_t data;
-} CoreRegister;
-
 typedef struct Core {
   uint32_t instruction_pointer;
-  CoreRegister registers[13];
+  uint16_t registers[13];
   uint8_t status;
   uint8_t zero;
   uint8_t bank;
@@ -22,9 +16,10 @@ typedef struct Core {
   bool awake;
 } Core;
 
-uint8_t core_register_get_rx(CoreRegister *self);
-uint8_t core_register_get_ry(CoreRegister *self);
-uint16_t core_register_get_r(CoreRegister *self);
+uint8_t core_register_get_rx(uint16_t self);
+uint8_t core_register_get_ry(uint16_t self);
+uint16_t core_register_get_r(uint16_t self);
 void core_print(Core *self);
+void set_register(Core *self, uint8_t reg_id, uint16_t data);
 
 #endif // INCLUDE_SRC_CORE_H_

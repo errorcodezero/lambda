@@ -25,7 +25,10 @@ void computer_reset(Computer *self);
 void computer_step_core(Computer *self, uint8_t core_id);
 void computer_step(Computer *self);
 uint8_t memory_get(Computer *self, uint32_t index);
+uint16_t memory_get_12(Computer *self, uint32_t index);
+uint16_t memory_get_16(Computer *self, uint32_t index);
 uint32_t memory_get_24(Computer *self, uint32_t index);
+uint32_t memory_get_32(Computer *self, uint32_t index);
 void computer_print(Computer *self);
 
 #endif // INCLUDE_SRC_COMPUTER_H_
