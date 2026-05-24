@@ -4,12 +4,12 @@ Cool fantasy console that has
 
 - 4 cores where each core has:
     - 13 16-bits General Purpose registers - 0-C
-    - 1 Status Register - D:
-        - Zero Flag
-        - Carry Flag
-        - Sign Flag
-        - Overflow Flag
-        - Interrupt Flag
+    - 1 Status Register - D: 000ZCSOI
+        - Zero Flag ------------^^^^^
+        - Carry Flag-------------||||
+        - Sign Flag---------------|||
+        - Overflow Flag------------||
+        - Interrupt Flag------------|
     - 1 Bank Register - E
     - 1 Zero Register - F
     - 24-bit instruction pointer
