@@ -26,8 +26,9 @@ void computer_step_core(Computer *self, uint8_t core_id) {
 }
 
 void computer_step(Computer *self) {
-  for (uint8_t i = 0; i < COMPUTER_CORES; i++)
-    computer_step_core(self, i);
+  if (!self->halted)
+    for (uint8_t i = 0; i < COMPUTER_CORES; i++)
+      computer_step_core(self, i);
 }
 
 uint8_t memory_get(Computer *self, uint32_t index) {

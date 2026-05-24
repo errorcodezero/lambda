@@ -5,6 +5,7 @@
 #include "display.h"
 #include "instructions.h"
 #include "memory.h"
+#include <stdbool.h>
 #include <stdint.h>
 
 #define MEMORY_WIDTH 0xA000000
@@ -17,6 +18,7 @@ typedef struct Computer {
   Color display[DISPLAY_WIDTH][DISPLAY_HEIGHT];
   uint8_t memory[MEMORY_WIDTH];
   InstructionHandler instructions[0x100];
+  bool halted;
 } Computer;
 
 void computer_init(Computer *self);
