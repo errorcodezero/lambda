@@ -12,6 +12,9 @@
 #define COMPUTER_CORES 4
 #define DISPLAY_WIDTH 500
 #define DISPLAY_HEIGHT 300
+#define GENERAL_REGISTERS 0xD
+#define BANK_REGISTER 0xE
+#define ZERO_REGISTER 0xF
 
 typedef struct Computer {
   Core cores[COMPUTER_CORES];

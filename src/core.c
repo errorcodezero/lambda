@@ -1,4 +1,5 @@
 #include "core.h"
+#include "computer.h"
 #include <stdbit.h>
 #include <stdio.h>
 
@@ -40,9 +41,9 @@ void core_print(Core *self) {
 }
 
 void set_register(Core *self, uint8_t reg_id, uint16_t data) {
-  if (reg_id <= 0xD) {
+  if (reg_id <= GENERAL_REGISTERS) {
     self->registers[reg_id] = data;
-  } else if (reg_id == 0xE) {
+  } else if (reg_id == BANK_REGISTER) {
 	self->bank = data;
   }
 }
