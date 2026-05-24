@@ -71,8 +71,8 @@ This is in hexadecimal and for simplicity, I'm avoiding prefixing all values wit
 
 ### 4 Byte Instructions
 
-- `ADDI` - Add Intermediate - `30 RR II II`
-- `SUBI` - Subtract Intermediate - `31 RR II II`
+- `ADDI` - Add Immediate - `30 RR II II`
+- `SUBI` - Subtract Immediate - `31 RR II II`
 - `LDI` - Load Immediate - `32 0R NN NN`
 - `AJMPIZD` - Absolute Jump If Zero Direct - `33 MM MM MM`
 - `AJMPIZI` - Absolute Jump If Zero Indirect - `34 MM MM MM`

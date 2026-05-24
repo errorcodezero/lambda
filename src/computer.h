@@ -12,7 +12,8 @@
 #define COMPUTER_CORES 4
 #define DISPLAY_WIDTH 500
 #define DISPLAY_HEIGHT 300
-#define GENERAL_REGISTERS 0xD
+#define GENERAL_REGISTERS 0xC
+#define STATUS_REGISTER 0xD
 #define BANK_REGISTER 0xE
 #define ZERO_REGISTER 0xF
 
@@ -30,7 +31,6 @@ void computer_reset(Computer *self);
 void computer_step_core(Computer *self, uint8_t core_id);
 void computer_step(Computer *self);
 uint8_t memory_get(Computer *self, uint32_t index);
-uint16_t memory_get_12(Computer *self, uint32_t index);
 uint16_t memory_get_16(Computer *self, uint32_t index);
 uint32_t memory_get_24(Computer *self, uint32_t index);
 uint32_t memory_get_32(Computer *self, uint32_t index);

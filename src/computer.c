@@ -23,9 +23,13 @@ void computer_start(Computer *self) {
 void computer_reset(Computer *self) { memset(self, 0, sizeof(Computer)); }
 
 void computer_step_core(Computer *self, uint8_t core_id) {
-  if (self->cores[core_id].awake)
+  if (self->cores[core_id].awake) {
+	self->cores[core_id].registers[STATUS_REGISTER] &= 0x00FF;
+	self->cores[core_id].registers[BANK_REGISTER] &= 0x00FF;
+	self->cores[core_id].registers[ZERO_REGISTER] = 0;
     self->instructions[memory_get(
         self, self->cores[core_id].instruction_pointer)](self, core_id);
+  }
 }
 
 void computer_step(Computer *self) {
@@ -38,20 +42,15 @@ uint8_t memory_get(Computer *self, uint32_t index) {
   return self->memory[index];
 }
 
+uint16_t memory_get_16(Computer *self, uint32_t index) {
+  return ((uint16_t)self->memory[index]) |
+         ((uint16_t)self->memory[index + 1] << 8);
+}
+
 uint32_t memory_get_24(Computer *self, uint32_t index) {
   return ((uint32_t)self->memory[index]) |
          ((uint32_t)self->memory[index + 1] << 8) |
          ((uint32_t)self->memory[index + 2] << 16);
-}
-
-uint16_t memory_get_12(Computer *self, uint32_t index) {
-  return ((uint16_t)self->memory[index]) |
-         (((uint16_t)self->memory[index + 1] & 0x0F) << 8);
-}
-
-uint16_t memory_get_16(Computer *self, uint32_t index) {
-  return ((uint16_t)self->memory[index]) |
-         ((uint16_t)self->memory[index + 1] << 8);
 }
 
 uint32_t memory_get_32(Computer *self, uint32_t index) {
@@ -63,9 +62,9 @@ uint32_t memory_get_32(Computer *self, uint32_t index) {
 
 void computer_print(Computer *self) {
   for (uint8_t i = 0; i < COMPUTER_CORES; i++) {
-	printf("---");
+	printf("--- ");
 	console_print_core(i);
-	printf("---");
+	printf("---\n");
     core_print(&self->cores[i]);
   }
 }

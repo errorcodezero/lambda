@@ -73,5 +73,7 @@ typedef void (*InstructionHandler)(Computer *computer, uint8_t core_id);
 void setup_instructions(Computer *computer);
 void HLT_handler(Computer *computer, uint8_t core_id);
 void LDI_handler(Computer *computer, uint8_t core_id);
+void ADDI_handler(Computer *computer, uint8_t core_id);
+void RLD_handler(Computer *computer, uint8_t core_id);
 
 #endif // INCLUDE_SRC_INSTRUCTIONS_H_

@@ -4,12 +4,13 @@
 #include <stdbool.h>
 #include <stdint.h>
 
+#define COMPUTER_REGISTERS 16
+
 typedef struct Core {
   uint32_t instruction_pointer;
-  uint16_t registers[13];
-  uint8_t status;
-  uint8_t zero;
-  uint8_t bank;
+  // The last three are actually 8-bit and the extra data is trimmed every
+  // cycle.
+  uint16_t registers[COMPUTER_REGISTERS];
   uint16_t stack_pointer;
   uint16_t base_pointer;
   uint8_t interrupt_vector_table[12];
