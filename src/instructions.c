@@ -1,5 +1,6 @@
 #include "instructions.h"
 #include "computer.h"
+#include "console.h"
 #include "core.h"
 #include <assert.h>
 #include <stdbool.h>
@@ -14,13 +15,14 @@ void setup_instructions(Computer *computer) {
 void HLT_handler(Computer *computer, uint8_t core_id) {
   computer->cores[core_id].awake = false;
   bool computer_awake = false;
-  for(uint8_t i = 0; i < COMPUTER_CORES; i++) {
-	computer_awake |= computer->cores[i].awake;
+  for (uint8_t i = 0; i < COMPUTER_CORES; i++) {
+    computer_awake |= computer->cores[i].awake;
   }
-  printf("CORE %d HALTED\n", core_id);
+  console_print_core(core_id);
+  printf("HLT\n");
   if (!computer_awake) {
-	printf("COMPUTER STOPPED\n");
-	computer->halted = true;
+    printf("%sCOMPUTER STOPPED%s\n", CONSOLE_BLUE, CONSOLE_RESET);
+    computer->halted = true;
   }
 }
 
@@ -30,6 +32,8 @@ void LDI_handler(Computer *computer, uint8_t core_id) {
   uint16_t immediate = memory_get_16(computer, core->instruction_pointer + 2);
 
   set_register(core, reg_id, immediate);
-  printf("CORE %d LOADED REG 0x%X WITH DATA 0x%X\n", core_id, reg_id, immediate);
+  console_print_core(core_id);
+  printf("LDI REG 0x%X, DATA 0x%X\n", reg_id,
+         immediate);
   core->instruction_pointer += 4;
 }
