@@ -33,10 +33,11 @@ int main() {
   computer->memory[program_addr++] = 0x00; // HLT
 
   computer_start(computer);
-  while(!computer->halted) {
-	computer_step(computer);
-	// at least before all the multi-core instructions are implemented, core_print will be used instead to print only what's relevant
-	core_print(&computer->cores[0]);
+  while (!computer->halted) {
+    computer_step(computer);
+    if (getenv("DEBUG") != NULL) {
+      computer_print(computer);
+    }
   }
 
   free(computer);
