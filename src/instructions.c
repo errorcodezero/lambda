@@ -5,12 +5,13 @@
 #include <assert.h>
 #include <stdbool.h>
 #include <stdio.h>
+#include "arithmetic_instructions.h"
 
 void setup_instructions(Computer *computer) {
   // add instructions here
+  setup_arithmetic_instructions(computer);
   computer->instructions[I_HLT] = HLT_handler;
   computer->instructions[I_LDI] = LDI_handler;
-  computer->instructions[I_ADDI] = ADDI_handler;
   computer->instructions[I_RLD] = RLD_handler;
 }
 
@@ -36,17 +37,6 @@ void LDI_handler(Computer *computer, uint8_t core_id) {
   set_register(core, reg_id, immediate);
   console_print_core(core_id);
   printf("LDI REG 0x%X, IMMEDIATE 0x%X\n", reg_id, immediate);
-}
-
-void ADDI_handler(Computer *computer, uint8_t core_id) {
-  Core *core = &computer->cores[core_id];
-  uint8_t registers = memory_get(computer, core->instruction_pointer + 1);
-  uint16_t immediate = memory_get_16(computer, core->instruction_pointer + 2);
-  uint16_t operand = core->registers[registers & 0x0F];
-  set_register(core, registers >> 4, operand + immediate);
-
-  console_print_core(core_id);
-  printf("ADDI REG 0x%X, REG 0x%X, IMMEDIATE 0x%X\n", registers >> 4, registers & 0x0F, immediate);
 }
 
 void RLD_handler(Computer *computer, uint8_t core_id) {

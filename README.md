@@ -82,6 +82,8 @@ This is in hexadecimal and for simplicity, I'm avoiding prefixing all values wit
 - `AJMPILI` - Absolute Jump If Lesser Indirect - `38 MM MM MM`
 - `RLD` - Relative Load - `39 SR MM MM`*
 - `DMUTAM` - Delete Mutex Absolute Memory - `C0 MM MM MM` - If the given memory address is within range of a mutex, it nullifies that mutex within the mutex table.
+- `ADDINC` - Add Immediate No Carry - `C1 RR II II`
+- `SUBINC` - Subtract Immediate No Borrow - `C2 RR II II`
 
 ### 5-byte Instructions
 

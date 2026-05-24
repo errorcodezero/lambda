@@ -58,6 +58,8 @@ typedef enum Instructions {
   I_AJMPILI = 0x38,
   I_RLD = 0x39,
   I_DMUTAM = 0xC0,
+  I_ADDINC = 0xC1,
+  I_SUBINC = 0xC2,
 
   // 5 Byte Instructions
   I_ALD = 0x40,
@@ -73,7 +75,6 @@ typedef void (*InstructionHandler)(Computer *computer, uint8_t core_id);
 void setup_instructions(Computer *computer);
 void HLT_handler(Computer *computer, uint8_t core_id);
 void LDI_handler(Computer *computer, uint8_t core_id);
-void ADDI_handler(Computer *computer, uint8_t core_id);
 void RLD_handler(Computer *computer, uint8_t core_id);
 
 #endif // INCLUDE_SRC_INSTRUCTIONS_H_
