@@ -14,10 +14,10 @@ void computer_start(Computer *self) {
   printf("%sCOMPUTER START%s\n", CONSOLE_BLUE, CONSOLE_RESET);
   self->cores[0].instruction_pointer = memory_get_24(self, 0);
   console_print_core(0);
-  printf("LOAD INSTRUCTION VECTOR 0x%X\n", memory_get_24(self, 0));
+  printf("INSTRUCTION VECTOR 0x%X\n", memory_get_24(self, 0));
   self->cores[0].awake = true;
   console_print_core(0);
-  printf("AWAKE\n");
+  printf("START\n");
 }
 
 void computer_reset(Computer *self) { memset(self, 0, sizeof(Computer)); }
