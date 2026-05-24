@@ -24,9 +24,12 @@ void computer_reset(Computer *self) { memset(self, 0, sizeof(Computer)); }
 
 void computer_step_core(Computer *self, uint8_t core_id) {
   if (self->cores[core_id].awake) {
-	self->cores[core_id].registers[STATUS_REGISTER] &= 0x00FF;
-	self->cores[core_id].registers[BANK_REGISTER] &= 0x00FF;
-	self->cores[core_id].registers[ZERO_REGISTER] = 0;
+    self->cores[core_id].registers[STATUS_REGISTER] &= 0x00FF;
+    self->cores[core_id].registers[BANK_REGISTER] &= 0x00FF;
+    self->cores[core_id].registers[ZERO_REGISTER] = 0;
+	// Auto incrementation of the instruction pointer works since the length of an instruction is encoded within the first nibble.
+    self->cores[core_id].instruction_pointer +=
+        (((self->memory[self->cores[core_id].instruction_pointer] >> 4) % 9) + 1);
     self->instructions[memory_get(
         self, self->cores[core_id].instruction_pointer)](self, core_id);
   }
@@ -62,9 +65,9 @@ uint32_t memory_get_32(Computer *self, uint32_t index) {
 
 void computer_print(Computer *self) {
   for (uint8_t i = 0; i < COMPUTER_CORES; i++) {
-	printf("--- ");
-	console_print_core(i);
-	printf("---\n");
+    printf("--- ");
+    console_print_core(i);
+    printf("---\n");
     core_print(&self->cores[i]);
   }
 }

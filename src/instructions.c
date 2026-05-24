@@ -36,7 +36,6 @@ void LDI_handler(Computer *computer, uint8_t core_id) {
   set_register(core, reg_id, immediate);
   console_print_core(core_id);
   printf("LDI REG 0x%X, IMMEDIATE 0x%X\n", reg_id, immediate);
-  core->instruction_pointer += 4;
 }
 
 void ADDI_handler(Computer *computer, uint8_t core_id) {
