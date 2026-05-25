@@ -39,13 +39,13 @@ This is in hexadecimal and for simplicity, I'm avoiding prefixing all values wit
 - `RSHFT` - Bit Shift Right Registers - `14 SR`
 - `ADDR` - Add Registers - `15 RR`**
 - `SUBR` - Subtract Registers - `16 RR`**
-- `XORR` - Bitwise XOR Registers - `17 RR`**
-- `ANDR` - Bitwise AND Registers - `18 RR`**
-- `NOTR` - Bitwise NOT Registers - `19 RR`**
-- `ORR` - Bitwise OR Registers - `1A RR`**
-- `NORR` - Bitwise NOR Registers - `1B RR`**
-- `NANDR` - Bitwise NAND Registers - `1C RR`**
-- `XNORR` - Bitwise XNOR Registers - `1D RR`**
+- [X] `XORR` - Bitwise XOR Registers - `17 RR`**
+- [X] `ANDR` - Bitwise AND Registers - `18 RR`**
+- [X] `NOTR` - Bitwise NOT Registers - `19 RR`**
+- [X] `ORR` - Bitwise OR Registers - `1A RR`**
+- [X] `NORR` - Bitwise NOR Registers - `1B RR`**
+- [X] `NANDR` - Bitwise NAND Registers - `1C RR`**
+- [X] `XNORR` - Bitwise XNOR Registers - `1D RR`**
 - `PSHI` - Push Immediate Stack - `1E II`
 - `POP` - Pop/Peek Stack - `1F SR` - 0 for stack will pop 8-bit value, 1 for stack will pop 16-bit value, 2 for stack will peep 8-bit value, and 4 for stack will peep 16-bit value.
 - `CMP` - Compare Registers - `A0 RR`
