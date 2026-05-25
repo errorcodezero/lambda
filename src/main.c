@@ -1,4 +1,5 @@
 #include "computer.h"
+#include "console.h"
 #include "core.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -133,6 +134,7 @@ int main(int argc, char *argv[]) {
     free(computer);
     return EXIT_FAILURE;
   }
+  printf("%sTests passed%s\n", CONSOLE_GREEN, CONSOLE_RESET);
 
   free(computer);
   return EXIT_SUCCESS;
