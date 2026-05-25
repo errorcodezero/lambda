@@ -32,8 +32,8 @@ This is in hexadecimal and for simplicity, I'm avoiding prefixing all values wit
 
 ### 2 Byte Instructions 
 
-- `INC` - Increment - `10 RI`
-- `DEC` - Decrement - `11 RI`
+- `INC` - Increment - `10 RI` [X]
+- `DEC` - Decrement - `11 RI` [X]
 - `TJMP` - Tiny Jump - `12 II`
 - `LSHFT` - Bit Shift Left Registers - `13 SR`
 - `RSHFT` - Bit Shift Right Registers - `14 SR`
