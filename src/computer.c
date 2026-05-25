@@ -28,10 +28,10 @@ void computer_step_core(Computer *self, uint8_t core_id) {
     self->cores[core_id].registers[BANK_REGISTER] &= 0x00FF;
     self->cores[core_id].registers[ZERO_REGISTER] = 0;
 	// Auto incrementation of the instruction pointer works since the length of an instruction is encoded within the first nibble.
-    self->cores[core_id].instruction_pointer +=
-        (((self->memory[self->cores[core_id].instruction_pointer] >> 4) % 9) + 1);
     self->instructions[memory_get(
         self, self->cores[core_id].instruction_pointer)](self, core_id);
+    self->cores[core_id].instruction_pointer +=
+        (((self->memory[self->cores[core_id].instruction_pointer] >> 4) % 9) + 1);
   }
 }
 
