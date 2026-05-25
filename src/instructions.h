@@ -34,7 +34,7 @@ typedef enum Instructions {
 
   // 3 Byte Instructions
   I_ADDB = 0x20,
-  I_SDDB = 0x21,
+  I_SUBB = 0x21,
   I_RJMPIZD = 0x22,
   I_RJMPIZI = 0x23,
   I_RJMPIGD = 0x24,

@@ -57,7 +57,7 @@ This is in hexadecimal and for simplicity, I'm avoiding prefixing all values wit
 ### 3 Byte Instructions
 
 - `ADDB` - Add One Half Byte - `20 RI II`
-- `SDDB` - Subtract One Half Byte - `21 RI II`
+- `SUBB` - Subtract One Half Byte - `21 RI II`
 - `RJMPIZD` - Relative Jump If Zero Direct - `22 MM MM`
 - `RJMPIZI` - Relative Jump If Zero Indirect - `23 MM MM`
 - `RJMPIGD` - Relative Jump If Greater Direct - `24 MM MM`

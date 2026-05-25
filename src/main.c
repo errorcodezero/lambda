@@ -56,6 +56,52 @@ int main(int argc, char *argv[]) {
   computer->memory[write_addr++] = 0x11; // DEC R1, 1
   computer->memory[write_addr++] = 0x11;
 
+  computer->memory[write_addr++] = 0x32; // LDI R2, 0x0F0F
+  computer->memory[write_addr++] = 0x02;
+  computer->memory[write_addr++] = 0x0F;
+  computer->memory[write_addr++] = 0x0F;
+
+  computer->memory[write_addr++] = 0x32; // LDI R3, 0x00FF
+  computer->memory[write_addr++] = 0x03;
+  computer->memory[write_addr++] = 0xFF;
+  computer->memory[write_addr++] = 0x00;
+
+  computer->memory[write_addr++] = 0x32; // LDI R5, 0x0F0F
+  computer->memory[write_addr++] = 0x05;
+  computer->memory[write_addr++] = 0x0F;
+  computer->memory[write_addr++] = 0x0F;
+
+  computer->memory[write_addr++] = 0x32; // LDI R6, 0x0F0F
+  computer->memory[write_addr++] = 0x06;
+  computer->memory[write_addr++] = 0x0F;
+  computer->memory[write_addr++] = 0x0F;
+
+  computer->memory[write_addr++] = 0x32; // LDI R7, 0x0F0F
+  computer->memory[write_addr++] = 0x07;
+  computer->memory[write_addr++] = 0x0F;
+  computer->memory[write_addr++] = 0x0F;
+
+  computer->memory[write_addr++] = 0x17; // XORR R2, R3
+  computer->memory[write_addr++] = 0x23;
+
+  computer->memory[write_addr++] = 0x18; // ANDR R2, R3
+  computer->memory[write_addr++] = 0x23;
+
+  computer->memory[write_addr++] = 0x1A; // ORR R2, R3
+  computer->memory[write_addr++] = 0x23;
+
+  computer->memory[write_addr++] = 0x19; // NOTR R4, R3
+  computer->memory[write_addr++] = 0x43;
+
+  computer->memory[write_addr++] = 0x1B; // NORR R5, R3
+  computer->memory[write_addr++] = 0x53;
+
+  computer->memory[write_addr++] = 0x1C; // NANDR R6, R3
+  computer->memory[write_addr++] = 0x63;
+
+  computer->memory[write_addr++] = 0x1D; // XNORR R7, R3
+  computer->memory[write_addr++] = 0x73;
+
   computer->memory[write_addr++] = 0x00; // HLT
 
   computer->memory[memory_data_addr] = 0xCD;
@@ -70,9 +116,20 @@ int main(int argc, char *argv[]) {
   }
 
   if (computer->cores[0].registers[0] != 0x1234 ||
-      computer->cores[0].registers[1] != 0xABCD) {
-    fprintf(stderr, "Test failed: R0=0x%X R1=0x%X\n",
-            computer->cores[0].registers[0], computer->cores[0].registers[1]);
+      computer->cores[0].registers[1] != 0xABCD ||
+      computer->cores[0].registers[2] != 0x00FF ||
+      computer->cores[0].registers[3] != 0x00FF ||
+      computer->cores[0].registers[4] != 0xFF00 ||
+      computer->cores[0].registers[5] != 0xF000 ||
+      computer->cores[0].registers[6] != 0xFFF0 ||
+      computer->cores[0].registers[7] != 0xF00F) {
+    fprintf(stderr,
+            "Test failed: R0=0x%X R1=0x%X R2=0x%X R3=0x%X R4=0x%X R5=0x%X "
+            "R6=0x%X R7=0x%X\n",
+            computer->cores[0].registers[0], computer->cores[0].registers[1],
+            computer->cores[0].registers[2], computer->cores[0].registers[3],
+            computer->cores[0].registers[4], computer->cores[0].registers[5],
+            computer->cores[0].registers[6], computer->cores[0].registers[7]);
     free(computer);
     return EXIT_FAILURE;
   }
