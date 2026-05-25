@@ -32,8 +32,8 @@ This is in hexadecimal and for simplicity, I'm avoiding prefixing all values wit
 
 ### 2 Byte Instructions 
 
-- `INC` - Increment - `10 RI` [X]
-- `DEC` - Decrement - `11 RI` [X]
+- [X] `INC` - Increment - `10 RI`
+- [X] `DEC` - Decrement - `11 RI`
 - `TJMP` - Tiny Jump - `12 II`
 - `LSHFT` - Bit Shift Left Registers - `13 SR`
 - `RSHFT` - Bit Shift Right Registers - `14 SR`
@@ -71,9 +71,9 @@ This is in hexadecimal and for simplicity, I'm avoiding prefixing all values wit
 
 ### 4 Byte Instructions
 
-- `ADDI` - Add Immediate - `30 RR II II` - [X]
-- `SUBI` - Subtract Immediate - `31 RR II II` - [X]
-- `LDI` - Load Immediate - `32 0R NN NN` - [X]
+- [X] `ADDI` - Add Immediate - `30 RR II II`
+- [X] `SUBI` - Subtract Immediate - `31 RR II II`
+- [X] `LDI` - Load Immediate - `32 0R NN NN`
 - `AJMPIZD` - Absolute Jump If Zero Direct - `33 MM MM MM`
 - `AJMPIZI` - Absolute Jump If Zero Indirect - `34 MM MM MM`
 - `AJMPIGD` - Absolute Jump If Greater Direct - `35 MM MM MM`
@@ -82,12 +82,12 @@ This is in hexadecimal and for simplicity, I'm avoiding prefixing all values wit
 - `AJMPILI` - Absolute Jump If Lesser Indirect - `38 MM MM MM`
 - `RLD` - Relative Load - `39 SR MM MM`*
 - `DMUTAM` - Delete Mutex Absolute Memory - `C0 MM MM MM` - If the given memory address is within range of a mutex, it nullifies that mutex within the mutex table.
-- `ADDINC` - Add Immediate No Carry - `C1 RR II II` - [X]
-- `SUBINC` - Subtract Immediate No Borrow - `C2 RR II II` - [X]
+- [X] `ADDINC` - Add Immediate No Carry - `C1 RR II II`
+- [X] `SUBINC` - Subtract Immediate No Borrow - `C2 RR II II`
 
 ### 5-byte Instructions
 
-- `ALD` - Absolute Load - `40 SR MM MM MM`* - [X]
+- [X] `ALD` - Absolute Load - `40 SR MM MM MM`*
 
 ### 6 Byte Instructions
 
