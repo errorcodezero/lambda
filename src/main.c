@@ -50,6 +50,12 @@ int main(int argc, char *argv[]) {
   computer->memory[write_addr++] = 0x00;
   computer->memory[write_addr++] = 0x20;
 
+  computer->memory[write_addr++] = 0x10; // INC R1, 1
+  computer->memory[write_addr++] = 0x11;
+
+  computer->memory[write_addr++] = 0x11; // DEC R1, 1
+  computer->memory[write_addr++] = 0x11;
+
   computer->memory[write_addr++] = 0x00; // HLT
 
   computer->memory[memory_data_addr] = 0xCD;

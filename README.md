@@ -5,11 +5,11 @@ Cool fantasy console that has
 - 4 cores where each core has:
     - 13 16-bits General Purpose registers - 0-C
     - 1 Status Register - D: 000ZCSOI
-        - Zero Flag ------------^^^^^
-        - Carry Flag-------------||||
-        - Sign Flag---------------|||
-        - Overflow Flag------------||
-        - Interrupt Flag------------|
+        - Zero Flag
+        - Carry Flag
+        - Sign Flag
+        - Overflow Flag
+        - Interrupt Flag
     - 1 Bank Register - E
     - 1 Zero Register - F
     - 24-bit instruction pointer
@@ -71,9 +71,9 @@ This is in hexadecimal and for simplicity, I'm avoiding prefixing all values wit
 
 ### 4 Byte Instructions
 
-- `ADDI` - Add Immediate - `30 RR II II`
-- `SUBI` - Subtract Immediate - `31 RR II II`
-- `LDI` - Load Immediate - `32 0R NN NN`
+- `ADDI` - Add Immediate - `30 RR II II` - [X]
+- `SUBI` - Subtract Immediate - `31 RR II II` - [X]
+- `LDI` - Load Immediate - `32 0R NN NN` - [X]
 - `AJMPIZD` - Absolute Jump If Zero Direct - `33 MM MM MM`
 - `AJMPIZI` - Absolute Jump If Zero Indirect - `34 MM MM MM`
 - `AJMPIGD` - Absolute Jump If Greater Direct - `35 MM MM MM`
@@ -82,12 +82,12 @@ This is in hexadecimal and for simplicity, I'm avoiding prefixing all values wit
 - `AJMPILI` - Absolute Jump If Lesser Indirect - `38 MM MM MM`
 - `RLD` - Relative Load - `39 SR MM MM`*
 - `DMUTAM` - Delete Mutex Absolute Memory - `C0 MM MM MM` - If the given memory address is within range of a mutex, it nullifies that mutex within the mutex table.
-- `ADDINC` - Add Immediate No Carry - `C1 RR II II`
-- `SUBINC` - Subtract Immediate No Borrow - `C2 RR II II`
+- `ADDINC` - Add Immediate No Carry - `C1 RR II II` - [X]
+- `SUBINC` - Subtract Immediate No Borrow - `C2 RR II II` - [X]
 
 ### 5-byte Instructions
 
-- `ALD` - Absolute Load - `40 SR MM MM MM`*
+- `ALD` - Absolute Load - `40 SR MM MM MM`* - [X]
 
 ### 6 Byte Instructions
 

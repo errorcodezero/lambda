@@ -9,5 +9,7 @@ void ADDI_handler(Computer *computer, uint8_t core_id);
 void SUBI_handler(Computer *computer, uint8_t core_id);
 void ADDINC_handler(Computer *computer, uint8_t core_id);
 void SUBINC_handler(Computer *computer, uint8_t core_id);
+void INC_handler(Computer *computer, uint8_t core_id);
+void DEC_handler(Computer *computer, uint8_t core_id);
 
 #endif
