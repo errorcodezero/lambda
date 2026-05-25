@@ -27,7 +27,7 @@ This is in hexadecimal and for simplicity, I'm avoiding prefixing all values wit
 
 ### 1 Byte Instructions
 
-- `HLT` - Halt - `00`
+- [X] `HLT` - Halt - `00`
 - `RET` - Return - `01`
 
 ### 2 Byte Instructions 
