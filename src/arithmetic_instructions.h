@@ -15,5 +15,7 @@ void ADDR_handler(Computer *computer, uint8_t core_id);
 void SUBR_handler(Computer *computer, uint8_t core_id);
 void ADDB_handler(Computer *computer, uint8_t core_id);
 void SUBB_handler(Computer *computer, uint8_t core_id);
+void ADDRR_handler(Computer *computer, uint8_t core_id);
+void SUBRR_handler(Computer *computer, uint8_t core_id);
 
 #endif

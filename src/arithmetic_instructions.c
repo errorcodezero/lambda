@@ -184,7 +184,8 @@ void SUBR_handler(Computer *computer, uint8_t core_id) {
 
 void ADDB_handler(Computer *computer, uint8_t core_id) {
   Core *core = &computer->cores[core_id];
-  uint8_t register_immediate = memory_get(computer, core->instruction_pointer + 1);
+  uint8_t register_immediate =
+      memory_get(computer, core->instruction_pointer + 1);
   uint8_t register_id = register_immediate >> 4;
   uint8_t immediate_high = register_immediate & 0x0F;
   uint8_t immediate_low = memory_get(computer, core->instruction_pointer + 2);
@@ -193,7 +194,8 @@ void ADDB_handler(Computer *computer, uint8_t core_id) {
   // See if the carry flag is used and if so, add 1 to the result
   uint8_t carry = (core->registers[STATUS_REGISTER] & 0x08) ? 1 : 0;
 
-  uint32_t result = (uint32_t)core->registers[register_id] + (uint32_t)immediate + carry;
+  uint32_t result =
+      (uint32_t)core->registers[register_id] + (uint32_t)immediate + carry;
 
   // Carry flag
   if (result > 0xFFFF) {
@@ -210,7 +212,8 @@ void ADDB_handler(Computer *computer, uint8_t core_id) {
 
 void SUBB_handler(Computer *computer, uint8_t core_id) {
   Core *core = &computer->cores[core_id];
-  uint8_t register_immediate = memory_get(computer, core->instruction_pointer + 1);
+  uint8_t register_immediate =
+      memory_get(computer, core->instruction_pointer + 1);
   uint8_t register_id = register_immediate >> 4;
   uint8_t immediate_high = register_immediate & 0x0F;
   uint8_t immediate_low = memory_get(computer, core->instruction_pointer + 2);
@@ -219,7 +222,8 @@ void SUBB_handler(Computer *computer, uint8_t core_id) {
   // See if the carry flag is used and if so, subtract 1 from the result
   uint8_t carry = (core->registers[STATUS_REGISTER] & 0x08) ? 1 : 0;
 
-  uint32_t result = (uint32_t)core->registers[register_id] - (uint32_t)immediate - carry;
+  uint32_t result =
+      (uint32_t)core->registers[register_id] - (uint32_t)immediate - carry;
 
   // Carry flag
   if (result > 0xFFFF) {
