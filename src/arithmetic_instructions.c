@@ -12,6 +12,8 @@ void setup_arithmetic_instructions(Computer *computer) {
   computer->instructions[I_SUBINC] = SUBINC_handler;
   computer->instructions[I_INC] = INC_handler;
   computer->instructions[I_DEC] = DEC_handler;
+  computer->instructions[I_ADDR] = ADDR_handler;
+  computer->instructions[I_SUBR] = SUBR_handler;
 }
 
 void ADDI_handler(Computer *computer, uint8_t core_id) {
@@ -132,4 +134,48 @@ void DEC_handler(Computer *computer, uint8_t core_id) {
   set_register(core, register_id, (uint16_t)result);
   console_print_core(core_id);
   printf("DEC REG 0x%X, IMMEDIATE 0x%X\n", register_id, decrement);
+}
+
+void ADDR_handler(Computer *computer, uint8_t core_id) {
+  Core *core = &computer->cores[core_id];
+  uint8_t registers = memory_get(computer, core->instruction_pointer + 1);
+
+  // See if the carry flag is used and if so, add 1 to the result
+  uint8_t carry = (core->registers[STATUS_REGISTER] & 0x08) ? 1 : 0;
+  uint32_t result = ((uint32_t)core->registers[registers >> 4]) +
+                    ((uint32_t)core->registers[registers & 0x0F]) + carry;
+
+  // Carry flag
+  if (result > 0xFFFF) {
+    core->registers[STATUS_REGISTER] |= 0x08;
+  } else {
+    core->registers[STATUS_REGISTER] &= ~0x08;
+  }
+
+  set_register(core, registers >> 4, (uint16_t)result);
+
+  console_print_core(core_id);
+  printf("ADDR REG 0x%X, REG 0x%X\n", registers >> 4, registers & 0x0F);
+}
+
+void SUBR_handler(Computer *computer, uint8_t core_id) {
+  Core *core = &computer->cores[core_id];
+  uint8_t registers = memory_get(computer, core->instruction_pointer + 1);
+
+  // See if the carry flag is used and if so, subtract 1 from the result
+  uint8_t carry = (core->registers[STATUS_REGISTER] & 0x08) ? 1 : 0;
+  uint32_t result = ((uint32_t)core->registers[registers >> 4]) -
+                    ((uint32_t)core->registers[registers & 0x0F]) - carry;
+
+  // Carry flag
+  if (result > 0xFFFF) {
+    core->registers[STATUS_REGISTER] |= 0x08;
+  } else {
+    core->registers[STATUS_REGISTER] &= ~0x08;
+  }
+
+  set_register(core, registers >> 4, (uint16_t)result);
+
+  console_print_core(core_id);
+  printf("SUBR REG 0x%X, REG 0x%X\n", registers >> 4, registers & 0x0F);
 }

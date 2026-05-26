@@ -82,6 +82,22 @@ int main(int argc, char *argv[]) {
   computer->memory[write_addr++] = 0x0F;
   computer->memory[write_addr++] = 0x0F;
 
+  computer->memory[write_addr++] = 0x32; // LDI R8, 0x1234
+  computer->memory[write_addr++] = 0x08;
+  computer->memory[write_addr++] = 0x34;
+  computer->memory[write_addr++] = 0x12;
+
+  computer->memory[write_addr++] = 0x32; // LDI R9, 0x0101
+  computer->memory[write_addr++] = 0x09;
+  computer->memory[write_addr++] = 0x01;
+  computer->memory[write_addr++] = 0x01;
+
+  computer->memory[write_addr++] = 0x15; // ADDR R8, R9
+  computer->memory[write_addr++] = 0x89;
+
+  computer->memory[write_addr++] = 0x16; // SUBR R8, R9
+  computer->memory[write_addr++] = 0x89;
+
   computer->memory[write_addr++] = 0x17; // XORR R2, R3
   computer->memory[write_addr++] = 0x23;
 
@@ -129,14 +145,17 @@ int main(int argc, char *argv[]) {
       computer->cores[0].registers[4] != 0xFF00 ||
       computer->cores[0].registers[5] != 0xF000 ||
       computer->cores[0].registers[6] != 0xFFF0 ||
-      computer->cores[0].registers[7] != 0xF00F) {
+      computer->cores[0].registers[7] != 0xF00F ||
+      computer->cores[0].registers[8] != 0x1234 ||
+      computer->cores[0].registers[9] != 0x0101) {
     fprintf(stderr,
             "Test failed: R0=0x%X R1=0x%X R2=0x%X R3=0x%X R4=0x%X R5=0x%X "
-            "R6=0x%X R7=0x%X\n",
+            "R6=0x%X R7=0x%X R8=0x%X R9=0x%X\n",
             computer->cores[0].registers[0], computer->cores[0].registers[1],
             computer->cores[0].registers[2], computer->cores[0].registers[3],
             computer->cores[0].registers[4], computer->cores[0].registers[5],
-            computer->cores[0].registers[6], computer->cores[0].registers[7]);
+            computer->cores[0].registers[6], computer->cores[0].registers[7],
+            computer->cores[0].registers[8], computer->cores[0].registers[9]);
     free(computer);
     return EXIT_FAILURE;
   }
