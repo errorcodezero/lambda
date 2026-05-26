@@ -66,7 +66,7 @@ This is in hexadecimal and for simplicity, I'm avoiding prefixing all values wit
 - `RJMPILI` - Relative Jump If Lesser Indirect - `27 MM MM`
 - `ADDRR` - Add Registers - `2A SR RR`\*\*\*
 - `SUBRR` - Subtract Registers - `2B SR RR`\*\*\*
-- `XANOR` - Bitwise AND/OR/XOR/NAND/NOR/XNOR Registers - `2C SR RR`** - 0 for `S` will make this bitwise AND, 1 will make this bitwise OR, 2 will make this bitwise XOR, 3 will make this bitwise NAND, 4 will make this bitwise NOR, 5 will make this bitwise XNOR
+- [X] `XANOR` - Bitwise AND/OR/XOR/NAND/NOR/XNOR Registers - `2C SR RR`** - 0 for `S` will make this bitwise AND, 1 will make this bitwise OR, 2 will make this bitwise XOR, 3 will make this bitwise NAND, 4 will make this bitwise NOR, 5 will make this bitwise XNOR
 - `MMUTMOI` - Modify Mutex Mode with Index- `2D II MM`
 
 ### 4 Byte Instructions

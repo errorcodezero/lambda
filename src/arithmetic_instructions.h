@@ -13,5 +13,7 @@ void INC_handler(Computer *computer, uint8_t core_id);
 void DEC_handler(Computer *computer, uint8_t core_id);
 void ADDR_handler(Computer *computer, uint8_t core_id);
 void SUBR_handler(Computer *computer, uint8_t core_id);
+void ADDRR_handler(Computer *computer, uint8_t core_id);
+void SUBRR_handler(Computer *computer, uint8_t core_id);
 
 #endif
