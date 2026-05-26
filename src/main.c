@@ -103,6 +103,12 @@ int main(int argc, char *argv[]) {
   computer->memory[write_addr++] = 0x1D; // XNORR R7, R3
   computer->memory[write_addr++] = 0x73;
 
+  computer->memory[write_addr++] = 0x13; // LSHFT R3, 4
+  computer->memory[write_addr++] = 0x43;
+
+  computer->memory[write_addr++] = 0x14; // RSHFT R3, 2
+  computer->memory[write_addr++] = 0x23;
+
   computer->memory[write_addr++] = 0x00; // HLT
 
   computer->memory[memory_data_addr] = 0xCD;
@@ -119,7 +125,7 @@ int main(int argc, char *argv[]) {
   if (computer->cores[0].registers[0] != 0x1234 ||
       computer->cores[0].registers[1] != 0xABCD ||
       computer->cores[0].registers[2] != 0x00FF ||
-      computer->cores[0].registers[3] != 0x00FF ||
+      computer->cores[0].registers[3] != 0x03FC ||
       computer->cores[0].registers[4] != 0xFF00 ||
       computer->cores[0].registers[5] != 0xF000 ||
       computer->cores[0].registers[6] != 0xFFF0 ||

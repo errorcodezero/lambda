@@ -11,5 +11,7 @@ void ORR_handler(Computer *computer, uint8_t core_id);
 void NORR_handler(Computer *computer, uint8_t core_id);
 void NANDR_handler(Computer *computer, uint8_t core_id);
 void XNORR_handler(Computer *computer, uint8_t core_id);
+void LSHFT_handler(Computer *computer, uint8_t core_id);
+void RSHFT_handler(Computer *computer, uint8_t core_id);
 
 #endif
