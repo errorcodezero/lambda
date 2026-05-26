@@ -92,16 +92,29 @@ int main(int argc, char *argv[]) {
   computer->memory[write_addr++] = 0x01;
   computer->memory[write_addr++] = 0x01;
 
-  computer->memory[write_addr++] = 0x32; // LDI R10, 0x2222
-  computer->memory[write_addr++] = 0x0A;
-  computer->memory[write_addr++] = 0x22;
-  computer->memory[write_addr++] = 0x22;
+   computer->memory[write_addr++] = 0x32; // LDI R10, 0x2222
+   computer->memory[write_addr++] = 0x0A;
+   computer->memory[write_addr++] = 0x22;
+   computer->memory[write_addr++] = 0x22;
 
-  computer->memory[write_addr++] = 0x12; // TJMP +2 (skip next INC)
-  computer->memory[write_addr++] = 0x02;
+   computer->memory[write_addr++] = 0x32; // LDI R11, 0x4000
+   computer->memory[write_addr++] = 0x0B;
+   computer->memory[write_addr++] = 0x00;
+   computer->memory[write_addr++] = 0x40;
 
-  computer->memory[write_addr++] = 0x10; // INC R10, 1 (should be skipped)
-  computer->memory[write_addr++] = 0xA1;
+   computer->memory[write_addr++] = 0x12; // TJMP +2 (skip next INC)
+   computer->memory[write_addr++] = 0x02;
+
+   computer->memory[write_addr++] = 0x10; // INC R10, 1 (should be skipped)
+   computer->memory[write_addr++] = 0xA1;
+
+   computer->memory[write_addr++] = 0x20; // ADDB R10, 0x0100
+   computer->memory[write_addr++] = 0xA1;
+   computer->memory[write_addr++] = 0x00;
+
+   computer->memory[write_addr++] = 0x21; // SUBB R11, 0x1000
+   computer->memory[write_addr++] = 0xB1;
+   computer->memory[write_addr++] = 0x00;
 
   computer->memory[write_addr++] = 0x15; // ADDR R8, R9
   computer->memory[write_addr++] = 0x89;
@@ -149,26 +162,27 @@ int main(int argc, char *argv[]) {
     }
   }
 
-  if (computer->cores[0].registers[0] != 0x1234 ||
-      computer->cores[0].registers[1] != 0xABCD ||
-      computer->cores[0].registers[2] != 0x00FF ||
-      computer->cores[0].registers[3] != 0x03FC ||
-      computer->cores[0].registers[4] != 0xFF00 ||
-      computer->cores[0].registers[5] != 0xF000 ||
-      computer->cores[0].registers[6] != 0xFFF0 ||
-      computer->cores[0].registers[7] != 0xF00F ||
-      computer->cores[0].registers[8] != 0x1234 ||
-      computer->cores[0].registers[9] != 0x0101 ||
-      computer->cores[0].registers[10] != 0x2222) {
-    fprintf(stderr,
-            "Test failed: R0=0x%X R1=0x%X R2=0x%X R3=0x%X R4=0x%X R5=0x%X "
-            "R6=0x%X R7=0x%X R8=0x%X R9=0x%X R10=0x%X\n",
-            computer->cores[0].registers[0], computer->cores[0].registers[1],
-            computer->cores[0].registers[2], computer->cores[0].registers[3],
-            computer->cores[0].registers[4], computer->cores[0].registers[5],
-            computer->cores[0].registers[6], computer->cores[0].registers[7],
-            computer->cores[0].registers[8], computer->cores[0].registers[9],
-            computer->cores[0].registers[10]);
+   if (computer->cores[0].registers[0] != 0x1234 ||
+       computer->cores[0].registers[1] != 0xABCD ||
+       computer->cores[0].registers[2] != 0x00FF ||
+       computer->cores[0].registers[3] != 0x03FC ||
+       computer->cores[0].registers[4] != 0xFF00 ||
+       computer->cores[0].registers[5] != 0xF000 ||
+       computer->cores[0].registers[6] != 0xFFF0 ||
+       computer->cores[0].registers[7] != 0xF00F ||
+       computer->cores[0].registers[8] != 0x1234 ||
+       computer->cores[0].registers[9] != 0x0101 ||
+       computer->cores[0].registers[10] != 0x2322 ||
+       computer->cores[0].registers[11] != 0x3F00) {
+     fprintf(stderr,
+             "Test failed: R0=0x%X R1=0x%X R2=0x%X R3=0x%X R4=0x%X R5=0x%X "
+             "R6=0x%X R7=0x%X R8=0x%X R9=0x%X R10=0x%X R11=0x%X\n",
+             computer->cores[0].registers[0], computer->cores[0].registers[1],
+             computer->cores[0].registers[2], computer->cores[0].registers[3],
+             computer->cores[0].registers[4], computer->cores[0].registers[5],
+             computer->cores[0].registers[6], computer->cores[0].registers[7],
+             computer->cores[0].registers[8], computer->cores[0].registers[9],
+             computer->cores[0].registers[10], computer->cores[0].registers[11]);
     free(computer);
     return EXIT_FAILURE;
   }
