@@ -9,6 +9,7 @@ void setup_core_instructions(Computer *computer) {
   computer->instructions[I_LDI] = LDI_handler;
   computer->instructions[I_RLD] = RLD_handler;
   computer->instructions[I_ALD] = ALD_handler;
+  computer->instructions[I_TJMP] = TJMP_handler;
 }
 
 void HLT_handler(Computer *computer, uint8_t core_id) {
@@ -70,4 +71,15 @@ void ALD_handler(Computer *computer, uint8_t core_id) {
   printf("ALD %s, REG 0x%X, MEMORY ADDRESS 0x%X\n",
          (indirection ? "WITH INDIRECTION" : "WITHOUT INDIRECTION"),
          register_id, original_memory_address);
+}
+
+void TJMP_handler(Computer *computer, uint8_t core_id) {
+  Core *core = &computer->cores[core_id];
+  int8_t index = memory_get(computer, core->instruction_pointer + 1);
+
+  core->instruction_pointer += index;
+
+  console_print_core(core_id);
+  printf("TJMP 0x%X %s\n", (index >= 0) ? index : (index * -1),
+         (index >= 0) ? "FORWARDS" : "BACKWARDS");
 }

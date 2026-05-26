@@ -92,6 +92,17 @@ int main(int argc, char *argv[]) {
   computer->memory[write_addr++] = 0x01;
   computer->memory[write_addr++] = 0x01;
 
+  computer->memory[write_addr++] = 0x32; // LDI R10, 0x2222
+  computer->memory[write_addr++] = 0x0A;
+  computer->memory[write_addr++] = 0x22;
+  computer->memory[write_addr++] = 0x22;
+
+  computer->memory[write_addr++] = 0x12; // TJMP +2 (skip next INC)
+  computer->memory[write_addr++] = 0x02;
+
+  computer->memory[write_addr++] = 0x10; // INC R10, 1 (should be skipped)
+  computer->memory[write_addr++] = 0xA1;
+
   computer->memory[write_addr++] = 0x15; // ADDR R8, R9
   computer->memory[write_addr++] = 0x89;
 
@@ -147,15 +158,17 @@ int main(int argc, char *argv[]) {
       computer->cores[0].registers[6] != 0xFFF0 ||
       computer->cores[0].registers[7] != 0xF00F ||
       computer->cores[0].registers[8] != 0x1234 ||
-      computer->cores[0].registers[9] != 0x0101) {
+      computer->cores[0].registers[9] != 0x0101 ||
+      computer->cores[0].registers[10] != 0x2222) {
     fprintf(stderr,
             "Test failed: R0=0x%X R1=0x%X R2=0x%X R3=0x%X R4=0x%X R5=0x%X "
-            "R6=0x%X R7=0x%X R8=0x%X R9=0x%X\n",
+            "R6=0x%X R7=0x%X R8=0x%X R9=0x%X R10=0x%X\n",
             computer->cores[0].registers[0], computer->cores[0].registers[1],
             computer->cores[0].registers[2], computer->cores[0].registers[3],
             computer->cores[0].registers[4], computer->cores[0].registers[5],
             computer->cores[0].registers[6], computer->cores[0].registers[7],
-            computer->cores[0].registers[8], computer->cores[0].registers[9]);
+            computer->cores[0].registers[8], computer->cores[0].registers[9],
+            computer->cores[0].registers[10]);
     free(computer);
     return EXIT_FAILURE;
   }

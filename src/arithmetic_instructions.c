@@ -179,3 +179,7 @@ void SUBR_handler(Computer *computer, uint8_t core_id) {
   console_print_core(core_id);
   printf("SUBR REG 0x%X, REG 0x%X\n", registers >> 4, registers & 0x0F);
 }
+
+void ADDB_handler(Computer *computer, uint8_t core_id);
+
+void SUBB_handler(Computer *computer, uint8_t core_id);

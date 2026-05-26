@@ -8,7 +8,7 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-#define MEMORY_WIDTH 0xA000000
+#define MEMORY_WIDTH 16777217
 #define COMPUTER_CORES 4
 #define DISPLAY_WIDTH 500
 #define DISPLAY_HEIGHT 300

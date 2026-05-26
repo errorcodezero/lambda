@@ -34,7 +34,7 @@ This is in hexadecimal and for simplicity, I'm avoiding prefixing all values wit
 
 - [X] `INC` - Increment - `10 RI`
 - [X] `DEC` - Decrement - `11 RI`
-- `TJMP` - Tiny Jump - `12 II`
+- [X] `TJMP` - Tiny Jump - `12 II`
 - [X] `LSHFT` - Bit Shift Left Registers - `13 SR`
 - [X] `RSHFT` - Bit Shift Right Registers - `14 SR`
 - [X] `ADDR` - Add Registers - `15 RR`**
