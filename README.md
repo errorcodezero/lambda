@@ -64,8 +64,8 @@ This is in hexadecimal and for simplicity, I'm avoiding prefixing all values wit
 - `RJMPIGI` - Relative Jump If Greater Indirect - `25 MM MM`
 - `RJMPILD` - Relative Jump If Lesser Direct - `26 MM MM`
 - `RJMPILI` - Relative Jump If Lesser Indirect - `27 MM MM`
-- `ADDRR` - Add Registers - `2A SR RR`\*\*\*
-- `SUBRR` - Subtract Registers - `2B SR RR`\*\*\*
+- [X] `ADDRR` - Add Registers - `2A SR RR`\*\*\*
+- [X] `SUBRR` - Subtract Registers - `2B SR RR`\*\*\*
 - [X] `XANOR` - Bitwise AND/OR/XOR/NAND/NOR/XNOR Registers - `2C SR RR`** - 0 for `S` will make this bitwise AND, 1 will make this bitwise OR, 2 will make this bitwise XOR, 3 will make this bitwise NAND, 4 will make this bitwise NOR, 5 will make this bitwise XNOR
 - `MMUTMOI` - Modify Mutex Mode with Index- `2D II MM`
 
