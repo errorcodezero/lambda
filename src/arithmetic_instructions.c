@@ -16,6 +16,8 @@ void setup_arithmetic_instructions(Computer *computer) {
   computer->instructions[I_SUBR] = SUBR_handler;
   computer->instructions[I_ADDB] = ADDB_handler;
   computer->instructions[I_SUBB] = SUBB_handler;
+  computer->instructions[I_ADDRR] = ADDRR_handler;
+  computer->instructions[I_SUBRR] = SUBRR_handler;
 }
 
 void ADDI_handler(Computer *computer, uint8_t core_id) {
@@ -236,4 +238,61 @@ void SUBB_handler(Computer *computer, uint8_t core_id) {
 
   console_print_core(core_id);
   printf("SUBB REG 0x%X, IMMEDIATE 0x%X\n", register_id, immediate);
+}
+
+void ADDRR_handler(Computer *computer, uint8_t core_id) {
+  Core *core = &computer->cores[core_id];
+  uint8_t flag = memory_get(computer, core->instruction_pointer + 1) >> 4;
+  uint8_t register_id_1 =
+      memory_get(computer, core->instruction_pointer + 1) & 0x0F;
+  uint8_t register_id_2 =
+      memory_get(computer, core->instruction_pointer + 2) >> 4;
+  uint8_t register_id_3 =
+      memory_get(computer, core->instruction_pointer + 2) & 0x0F;
+
+  uint16_t val2 = core->registers[register_id_2];
+  uint16_t val3 = core->registers[register_id_3];
+  uint32_t result = (uint32_t)val2 + (uint32_t)val3;
+
+  if (flag != 0) {
+    result += (core->registers[STATUS_REGISTER] & 0x08) ? 1 : 0;
+    if (result > 0xFFFF) {
+      core->registers[STATUS_REGISTER] |= 0x08;
+    } else {
+      core->registers[STATUS_REGISTER] &= ~0x08;
+    }
+  }
+
+  set_register(core, register_id_1, (uint16_t)result);
+  console_print_core(core_id);
+  printf("ADDRR REG 0x%X, REG 0x%X, REG 0x%X\n", register_id_1, register_id_2,
+         register_id_3);
+}
+
+void SUBRR_handler(Computer *computer, uint8_t core_id) {
+  Core *core = &computer->cores[core_id];
+  uint8_t flag = memory_get(computer, core->instruction_pointer + 1) >> 4;
+  uint8_t register_id_1 =
+      memory_get(computer, core->instruction_pointer + 1) & 0x0F;
+  uint8_t register_id_2 =
+      memory_get(computer, core->instruction_pointer + 2) >> 4;
+  uint8_t register_id_3 =
+      memory_get(computer, core->instruction_pointer + 2) & 0x0F;
+
+  uint32_t result =
+      core->registers[register_id_2] - core->registers[register_id_3];
+
+  if (flag != 0) {
+    result -= (core->registers[STATUS_REGISTER] & 0x08) ? 1 : 0;
+    if (result > 0xFFFF) {
+      core->registers[STATUS_REGISTER] |= 0x08;
+    } else {
+      core->registers[STATUS_REGISTER] &= ~0x08;
+    }
+  }
+
+  set_register(core, register_id_1, (uint16_t)result);
+  console_print_core(core_id);
+  printf("SUBRR REG 0x%X, REG 0x%X, REG 0x%X\n", register_id_1, register_id_2,
+         register_id_3);
 }
