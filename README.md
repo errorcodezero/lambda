@@ -67,7 +67,8 @@ This is in hexadecimal and for simplicity, I'm avoiding prefixing all values wit
 - [X] `ADDRR` - Add Registers - `2A SR RR`\*\*\*
 - [X] `SUBRR` - Subtract Registers - `2B SR RR`\*\*\*
 - [X] `XANOR` - Bitwise AND/OR/XOR/NAND/NOR/XNOR Registers - `2C SR RR`** - 0 for `S` will make this bitwise AND, 1 will make this bitwise OR, 2 will make this bitwise XOR, 3 will make this bitwise NAND, 4 will make this bitwise NOR, 5 will make this bitwise XNOR
-- `MMUTMOI` - Modify Mutex Mode with Index- `2D II MM`
+- `MMUTMOI` - Modify Mutex Mode with Index - `2D II MM`
+- `MWR` - Move with Register - `2E SR`*
 
 ### 4 Byte Instructions
 
@@ -84,10 +85,12 @@ This is in hexadecimal and for simplicity, I'm avoiding prefixing all values wit
 - `DMUTAM` - Delete Mutex Absolute Memory - `C0 MM MM MM` - If the given memory address is within range of a mutex, it nullifies that mutex within the mutex table.
 - [X] `ADDINC` - Add Immediate No Carry - `C1 RR II II`
 - [X] `SUBINC` - Subtract Immediate No Borrow - `C2 RR II II`
+- `RLM` - Relative Move - `39 SR MM MM` - 0 for S means one byte, no indirection, 2 means two bytes, no indirection, 3 means 1 byte with indirection, 4 means 2 byte with indirection
 
 ### 5-byte Instructions
 
 - [X] `ALD` - Absolute Load - `40 SR MM MM MM`*
+- `ALM` - Absolute Move - `41 SR MM MM MM`* - 0 for S means one byte, no indirection, 2 means two bytes, no indirection, 3 means 1 byte with indirection, 4 means 2 byte with indirection
 
 ### 6 Byte Instructions
 
