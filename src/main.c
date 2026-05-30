@@ -187,6 +187,14 @@ int main(int argc, char *argv[]) {
    computer->memory[write_addr++] = 0x07;
    computer->memory[write_addr++] = 0x31;
 
+   computer->memory[write_addr++] = 0x2E; // MWR R0, R2 (stores R2 to mem[BANK:reg[R0]])
+   computer->memory[write_addr++] = 0x02;
+   computer->memory[write_addr++] = 0x00;
+
+   computer->memory[write_addr++] = 0x2F; // MIWR R3, R2 (stores R2 via indirect through mem[BANK:reg[R3]])
+   computer->memory[write_addr++] = 0x32;
+   computer->memory[write_addr++] = 0x00;
+
    computer->memory[write_addr++] = 0x32; // LDI R14, 0xAABB
    computer->memory[write_addr++] = 0x0E;
    computer->memory[write_addr++] = 0xBB;
@@ -241,6 +249,11 @@ int main(int argc, char *argv[]) {
   computer->memory[0x003108] = 0x32;
   computer->memory[0x003109] = 0x00;
 
+  // Indirection pointer for MIWR (R3=0x03FC) -> 0x003300
+  computer->memory[0x0003FC] = 0x00;
+  computer->memory[0x0003FD] = 0x33;
+  computer->memory[0x0003FE] = 0x00;
+
   computer_start(computer);
   while (!computer->halted) {
     computer_step(computer);
@@ -275,14 +288,20 @@ int main(int argc, char *argv[]) {
         computer->memory[0x003102] != 0xAB ||
         computer->memory[0x003200] != 0x34 ||
         computer->memory[0x003202] != 0xCD ||
-        computer->memory[0x003203] != 0xAB) {
+        computer->memory[0x003203] != 0xAB ||
+        computer->memory[0x001234] != 0xFF ||
+        computer->memory[0x001235] != 0x00 ||
+        computer->memory[0x003300] != 0xFF ||
+        computer->memory[0x003301] != 0x00) {
       fprintf(stderr,
               "Test failed: R0=0x%X R1=0x%X R2=0x%X R3=0x%X R4=0x%X R5=0x%X "
               "R6=0x%X R7=0x%X R8=0x%X R9=0x%X R10=0x%X R11=0x%X R12=0x%X R13=0x%X "
               "R14=0x%X MEM[0x2100]=0x%X MEM[0x2101]=0x%X MEM[0x2102]=0x%X "
               "MEM[0x3000]=0x%X MEM[0x3002]=0x%X MEM[0x3003]=0x%X "
               "MEM[0x3100]=0x%X MEM[0x3101]=0x%X MEM[0x3102]=0x%X "
-              "MEM[0x3200]=0x%X MEM[0x3202]=0x%X MEM[0x3203]=0x%X\n",
+               "MEM[0x3200]=0x%X MEM[0x3202]=0x%X MEM[0x3203]=0x%X "
+               "MEM[0x1234]=0x%X MEM[0x1235]=0x%X "
+               "MEM[0x3300]=0x%X MEM[0x3301]=0x%X\n",
               computer->cores[0].registers[0], computer->cores[0].registers[1],
               computer->cores[0].registers[2], computer->cores[0].registers[3],
               computer->cores[0].registers[4], computer->cores[0].registers[5],
@@ -296,7 +315,9 @@ int main(int argc, char *argv[]) {
               computer->memory[0x003002], computer->memory[0x003003],
               computer->memory[0x003100], computer->memory[0x003101],
               computer->memory[0x003102], computer->memory[0x003200],
-              computer->memory[0x003202], computer->memory[0x003203]);
+              computer->memory[0x003202], computer->memory[0x003203],
+              computer->memory[0x001234], computer->memory[0x001235],
+              computer->memory[0x003300], computer->memory[0x003301]);
     free(computer);
     return EXIT_FAILURE;
   }

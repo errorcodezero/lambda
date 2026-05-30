@@ -12,6 +12,8 @@ void setup_core_instructions(Computer *computer) {
   computer->instructions[I_TJMP] = TJMP_handler;
   computer->instructions[I_ALM] = ALM_handler;
   computer->instructions[I_RLM] = RLM_handler;
+  computer->instructions[I_MWR] = MWR_handler;
+  computer->instructions[I_MIWR] = MIWR_handler;
 }
 
 void HLT_handler(Computer *computer, uint8_t core_id) {
@@ -135,9 +137,8 @@ void RLM_handler(Computer *computer, uint8_t core_id) {
   uint8_t flag = memory_get(computer, core->instruction_pointer + 1) >> 4;
   uint8_t register_id =
       memory_get(computer, core->instruction_pointer + 1) & 0x0F;
-  uint32_t memory =
-      memory_get_16(computer, core->instruction_pointer + 2) +
-      ((uint32_t) core->registers[BANK_REGISTER] << 16);
+  uint32_t memory = memory_get_16(computer, core->instruction_pointer + 2) +
+                    ((uint32_t)core->registers[BANK_REGISTER] << 16);
 
   switch (flag) {
   case 0:
@@ -173,4 +174,29 @@ void RLM_handler(Computer *computer, uint8_t core_id) {
       "RLM %s, %s, REG 0x%X, MEMORY ADDRESS 0x%X\n",
       ((flag == 2 || flag == 3) ? "WITH INDIRECTION" : "WITHOUT INDIRECTION"),
       ((flag == 0 || flag == 2) ? "1 BYTE" : "2 BYTES"), register_id, memory);
+}
+
+void MWR_handler(Computer *computer, uint8_t core_id) {
+  Core *core = &computer->cores[core_id];
+  uint8_t register_id_1 = memory_get(computer, core->instruction_pointer + 1) >> 4;
+  uint8_t register_id_2 = memory_get(computer, core->instruction_pointer + 1) & 0x0F;
+  uint32_t memory = (((uint32_t) core->registers[BANK_REGISTER]) << 16) + core->registers[register_id_1];
+  computer->memory[memory] = core_register_get_ry(core->registers[register_id_2]);
+  computer->memory[memory + 1] = core_register_get_rx(core->registers[register_id_2]);
+
+  console_print_core(core_id);
+  printf("MWR REG 0x%X, REG 0x%X\n", register_id_1, register_id_2);
+}
+
+void MIWR_handler(Computer *computer, uint8_t core_id) {
+  Core *core = &computer->cores[core_id];
+  uint8_t register_id_1 = memory_get(computer, core->instruction_pointer + 1) >> 4;
+  uint8_t register_id_2 = memory_get(computer, core->instruction_pointer + 1) & 0x0F;
+  uint32_t memory = (((uint32_t) core->registers[BANK_REGISTER]) << 16) + core->registers[register_id_1];
+  uint32_t new_memory = memory_get_24(computer, memory);
+  computer->memory[new_memory] = core_register_get_ry(core->registers[register_id_2]);
+  computer->memory[new_memory + 1] = core_register_get_rx(core->registers[register_id_2]);
+
+  console_print_core(core_id);
+  printf("MIWR REG 0x%X, REG 0x%X\n", register_id_1, register_id_2);
 }
