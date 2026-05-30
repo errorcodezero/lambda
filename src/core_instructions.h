@@ -10,5 +10,6 @@ void RLD_handler(Computer *computer, uint8_t core_id);
 void ALD_handler(Computer *computer, uint8_t core_id);
 void TJMP_handler(Computer *computer, uint8_t core_id);
 void ALM_handler(Computer *computer, uint8_t core_id);
+void RLM_handler(Computer *computer, uint8_t core_id);
 
 #endif // INCLUDE_SRC_CORE_INSTRUCTIONS_H_

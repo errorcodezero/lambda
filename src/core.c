@@ -43,7 +43,7 @@ void core_print(Core *self) {
 }
 
 void set_register(Core *self, uint8_t reg_id, uint16_t data) {
-  if (reg_id <= COMPUTER_REGISTERS) {
+  if (reg_id < COMPUTER_REGISTERS) {
     self->registers[reg_id] = data;
   }
 }

@@ -57,12 +57,14 @@ typedef enum Instructions {
   I_AJMPILD = 0x37,
   I_AJMPILI = 0x38,
   I_RLD = 0x39,
+  I_RLM = 0x3A,
   I_DMUTAM = 0xC0,
   I_ADDINC = 0xC1,
   I_SUBINC = 0xC2,
 
   // 5 Byte Instructions
   I_ALD = 0x40,
+  I_ALM = 0x41,
 
   // 6 Byte Instructions
   I_MMUTMRI = 0x50,

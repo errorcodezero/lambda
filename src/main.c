@@ -164,13 +164,82 @@ int main(int argc, char *argv[]) {
   computer->memory[write_addr++] = 0x13; // LSHFT R3, 4
   computer->memory[write_addr++] = 0x43;
 
-  computer->memory[write_addr++] = 0x14; // RSHFT R3, 2
-  computer->memory[write_addr++] = 0x23;
+   computer->memory[write_addr++] = 0x14; // RSHFT R3, 2
+   computer->memory[write_addr++] = 0x23;
 
-  computer->memory[write_addr++] = 0x00; // HLT
+   computer->memory[write_addr++] = 0x3A; // RLM MODE 0, R0, offset 0x3100 (1 byte, no indirection)
+   computer->memory[write_addr++] = 0x00;
+   computer->memory[write_addr++] = 0x00;
+   computer->memory[write_addr++] = 0x31;
+
+   computer->memory[write_addr++] = 0x3A; // RLM MODE 1, R1, offset 0x3101 (2 bytes, no indirection)
+   computer->memory[write_addr++] = 0x11;
+   computer->memory[write_addr++] = 0x01;
+   computer->memory[write_addr++] = 0x31;
+
+   computer->memory[write_addr++] = 0x3A; // RLM MODE 2, R0, offset 0x3104 (1 byte, with indirection)
+   computer->memory[write_addr++] = 0x20;
+   computer->memory[write_addr++] = 0x04;
+   computer->memory[write_addr++] = 0x31;
+
+   computer->memory[write_addr++] = 0x3A; // RLM MODE 3, R1, offset 0x3107 (2 bytes, with indirection)
+   computer->memory[write_addr++] = 0x31;
+   computer->memory[write_addr++] = 0x07;
+   computer->memory[write_addr++] = 0x31;
+
+   computer->memory[write_addr++] = 0x32; // LDI R14, 0xAABB
+   computer->memory[write_addr++] = 0x0E;
+   computer->memory[write_addr++] = 0xBB;
+   computer->memory[write_addr++] = 0xAA;
+
+   computer->memory[write_addr++] = 0x41; // ALM MODE 0, R14, 0x002100 (1 byte, no indirection)
+   computer->memory[write_addr++] = 0x0E;
+   computer->memory[write_addr++] = 0x00;
+   computer->memory[write_addr++] = 0x21;
+   computer->memory[write_addr++] = 0x00;
+
+   computer->memory[write_addr++] = 0x41; // ALM MODE 1, R14, 0x002101 (2 bytes, no indirection)
+   computer->memory[write_addr++] = 0x1E;
+   computer->memory[write_addr++] = 0x01;
+   computer->memory[write_addr++] = 0x21;
+   computer->memory[write_addr++] = 0x00;
+
+   computer->memory[write_addr++] = 0x41; // ALM MODE 2, R14, 0x002200 (1 byte, with indirection)
+   computer->memory[write_addr++] = 0x2E;
+   computer->memory[write_addr++] = 0x00;
+   computer->memory[write_addr++] = 0x22;
+   computer->memory[write_addr++] = 0x00;
+
+   computer->memory[write_addr++] = 0x41; // ALM MODE 3, R14, 0x002203 (2 bytes, with indirection)
+   computer->memory[write_addr++] = 0x3E;
+   computer->memory[write_addr++] = 0x03;
+   computer->memory[write_addr++] = 0x22;
+   computer->memory[write_addr++] = 0x00;
+
+   computer->memory[write_addr++] = 0x00; // HLT
 
   computer->memory[memory_data_addr] = 0xCD;
   computer->memory[memory_data_addr + 1] = 0xAB;
+
+  // Indirection pointer for ALM MODE 2 -> 0x003000
+  computer->memory[0x002200] = 0x00;
+  computer->memory[0x002201] = 0x30;
+  computer->memory[0x002202] = 0x00;
+
+  // Indirection pointer for ALM MODE 3 -> 0x003002
+  computer->memory[0x002203] = 0x02;
+  computer->memory[0x002204] = 0x30;
+  computer->memory[0x002205] = 0x00;
+
+  // Indirection pointer for RLM MODE 2 -> 0x003200
+  computer->memory[0x003104] = 0x00;
+  computer->memory[0x003105] = 0x32;
+  computer->memory[0x003106] = 0x00;
+
+  // Indirection pointer for RLM MODE 3 -> 0x003202
+  computer->memory[0x003107] = 0x02;
+  computer->memory[0x003108] = 0x32;
+  computer->memory[0x003109] = 0x00;
 
   computer_start(computer);
   while (!computer->halted) {
@@ -193,17 +262,41 @@ int main(int argc, char *argv[]) {
         computer->cores[0].registers[10] != 0x2322 ||
         computer->cores[0].registers[11] != 0x3F00 ||
         computer->cores[0].registers[12] != 0x0003 ||
-        computer->cores[0].registers[13] != 0x0001) {
+        computer->cores[0].registers[13] != 0x0001 ||
+        computer->cores[0].registers[14] != 0x00BB ||
+        computer->memory[0x002100] != 0xBB ||
+        computer->memory[0x002101] != 0xBB ||
+        computer->memory[0x002102] != 0x00 ||
+        computer->memory[0x003000] != 0xBB ||
+        computer->memory[0x003002] != 0xBB ||
+        computer->memory[0x003003] != 0x00 ||
+        computer->memory[0x003100] != 0x34 ||
+        computer->memory[0x003101] != 0xCD ||
+        computer->memory[0x003102] != 0xAB ||
+        computer->memory[0x003200] != 0x34 ||
+        computer->memory[0x003202] != 0xCD ||
+        computer->memory[0x003203] != 0xAB) {
       fprintf(stderr,
               "Test failed: R0=0x%X R1=0x%X R2=0x%X R3=0x%X R4=0x%X R5=0x%X "
-              "R6=0x%X R7=0x%X R8=0x%X R9=0x%X R10=0x%X R11=0x%X R12=0x%X R13=0x%X\n",
+              "R6=0x%X R7=0x%X R8=0x%X R9=0x%X R10=0x%X R11=0x%X R12=0x%X R13=0x%X "
+              "R14=0x%X MEM[0x2100]=0x%X MEM[0x2101]=0x%X MEM[0x2102]=0x%X "
+              "MEM[0x3000]=0x%X MEM[0x3002]=0x%X MEM[0x3003]=0x%X "
+              "MEM[0x3100]=0x%X MEM[0x3101]=0x%X MEM[0x3102]=0x%X "
+              "MEM[0x3200]=0x%X MEM[0x3202]=0x%X MEM[0x3203]=0x%X\n",
               computer->cores[0].registers[0], computer->cores[0].registers[1],
               computer->cores[0].registers[2], computer->cores[0].registers[3],
               computer->cores[0].registers[4], computer->cores[0].registers[5],
               computer->cores[0].registers[6], computer->cores[0].registers[7],
               computer->cores[0].registers[8], computer->cores[0].registers[9],
               computer->cores[0].registers[10], computer->cores[0].registers[11],
-              computer->cores[0].registers[12], computer->cores[0].registers[13]);
+              computer->cores[0].registers[12], computer->cores[0].registers[13],
+              computer->cores[0].registers[14],
+              computer->memory[0x002100], computer->memory[0x002101],
+              computer->memory[0x002102], computer->memory[0x003000],
+              computer->memory[0x003002], computer->memory[0x003003],
+              computer->memory[0x003100], computer->memory[0x003101],
+              computer->memory[0x003102], computer->memory[0x003200],
+              computer->memory[0x003202], computer->memory[0x003203]);
     free(computer);
     return EXIT_FAILURE;
   }

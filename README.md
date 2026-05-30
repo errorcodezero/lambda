@@ -82,15 +82,15 @@ This is in hexadecimal and for simplicity, I'm avoiding prefixing all values wit
 - `AJMPILD` - Absolute Jump If Lesser Direct - `37 MM MM MM`
 - `AJMPILI` - Absolute Jump If Lesser Indirect - `38 MM MM MM`
 - [X] `RLD` - Relative Load - `39 SR MM MM`*
+- `RLM` - Relative Move - `3A SR MM MM` - 0 for S means one byte, no indirection, 1 means two bytes, no indirection, 2 means 1 byte with indirection, 3 means 2 byte with indirection
 - `DMUTAM` - Delete Mutex Absolute Memory - `C0 MM MM MM` - If the given memory address is within range of a mutex, it nullifies that mutex within the mutex table.
 - [X] `ADDINC` - Add Immediate No Carry - `C1 RR II II`
 - [X] `SUBINC` - Subtract Immediate No Borrow - `C2 RR II II`
-- `RLM` - Relative Move - `39 SR MM MM` - 0 for S means one byte, no indirection, 1 means two bytes, no indirection, 2 means 1 byte with indirection, 3 means 2 byte with indirection
 
 ### 5-byte Instructions
 
 - [X] `ALD` - Absolute Load - `40 SR MM MM MM`*
-- `ALM` - Absolute Move - `41 SR MM MM MM`* - 0 for S means one byte, no indirection, 1 means two bytes, no indirection, 2 means 1 byte with indirection, 3 means 2 byte with indirection
+- [X] `ALM` - Absolute Move - `41 SR MM MM MM`* - 0 for S means one byte, no indirection, 1 means two bytes, no indirection, 2 means 1 byte with indirection, 3 means 2 byte with indirection
 
 ### 6 Byte Instructions
 
