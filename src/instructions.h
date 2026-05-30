@@ -45,6 +45,8 @@ typedef enum Instructions {
   I_SUBRR = 0x2B,
   I_XANOR = 0x2C,
   I_MMUTMOI = 0x2D,
+  I_MWR = 0x2E,
+  I_MIWR = 0x2F,
 
   // 4 Byte Instructions
   I_ADDI = 0x30,
