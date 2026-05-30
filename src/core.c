@@ -7,7 +7,7 @@ uint8_t core_register_get_rx(uint16_t self) {
 #if (__STDC__ENDIAN__NATIVE__ == __STDC_ENDIAN_LITTLE)
   return (uint8_t)(self >> 8);
 #else
-  return (uint8_t)(*self);
+  return (uint8_t)(self);
 #endif /* if (__STDC__ENDIAN__NATIVE__ == __STDC_ENDIAN_LITTLE) */
 }
 
@@ -15,7 +15,7 @@ uint8_t core_register_get_ry(uint16_t self) {
 #if (__STDC__ENDIAN__NATIVE__ == __STDC_ENDIAN_LITTLE)
   return (uint8_t)(self);
 #else
-  return (uint8_t)(self->data >> 8);
+  return (uint8_t)(self >> 8);
 #endif
 }
 

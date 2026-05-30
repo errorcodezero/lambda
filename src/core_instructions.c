@@ -83,3 +83,42 @@ void TJMP_handler(Computer *computer, uint8_t core_id) {
   printf("TJMP 0x%X %s\n", (index >= 0) ? index : (index * -1),
          (index >= 0) ? "FORWARDS" : "BACKWARDS");
 }
+
+void ALM_handler(Computer *computer, uint8_t core_id) {
+  Core *core = &computer->cores[core_id];
+  uint8_t flag = memory_get(computer, core->instruction_pointer + 1) >> 4;
+  uint8_t register_id =
+      memory_get(computer, core->instruction_pointer + 1) & 0x0F;
+  uint32_t memory = memory_get_24(computer, core->instruction_pointer + 2);
+
+  switch (flag) {
+  case 0:
+    computer->memory[memory] =
+        core_register_get_ry(core->registers[register_id]);
+    break;
+  case 1:
+    computer->memory[memory] =
+        core_register_get_ry(core->registers[register_id]);
+    computer->memory[memory + 1] =
+        core_register_get_rx(core->registers[register_id]);
+    break;
+  case 2:
+    computer->memory[memory_get_24(computer, memory)] =
+        core_register_get_ry(core->registers[register_id]);
+    break;
+  case 3:
+    computer->memory[memory_get_24(computer, memory)] =
+        core_register_get_ry(core->registers[register_id]);
+    computer->memory[memory_get_24(computer, memory)] =
+        core_register_get_rx(core->registers[register_id]);
+    break;
+  default:
+    return;
+  }
+
+  console_print_core(core_id);
+  printf(
+      "ALM %s, %s, REG 0x%X, MEMORY ADDRESS 0x%X\n",
+      ((flag == 0 || flag == 1) ? "WITH INDIRECTION" : "WITHOUT INDIRECTION"),
+      ((flag == 0 || flag == 2) ? "2 BYTES" : "1 BYTES"), register_id, memory);
+}
