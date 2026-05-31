@@ -42,7 +42,7 @@ void ADDI_handler(Computer *computer, uint8_t core_id) {
   set_register(core, registers >> 4, (uint16_t)result);
   set_zero_and_sign_flags(core, (uint16_t)result);
 
-  console_print_core(core_id);
+  console_print_core(core_id, computer->cores[core_id].instruction_pointer);
   printf("ADDI REG 0x%X, REG 0x%X, IMMEDIATE 0x%X\n", registers >> 4,
          registers & 0x0F, immediate);
 }
@@ -68,7 +68,7 @@ void SUBI_handler(Computer *computer, uint8_t core_id) {
   set_register(core, registers >> 4, (uint16_t)result);
   set_zero_and_sign_flags(core, (uint16_t)result);
 
-  console_print_core(core_id);
+  console_print_core(core_id, computer->cores[core_id].instruction_pointer);
   printf("SUBI REG 0x%X, REG 0x%X, IMMEDIATE 0x%X\n", registers >> 4,
          registers & 0x0F, immediate);
 }
@@ -84,7 +84,7 @@ void ADDINC_handler(Computer *computer, uint8_t core_id) {
   set_register(core, registers >> 4, (uint16_t)result);
   set_zero_and_sign_flags(core, (uint16_t)result);
 
-  console_print_core(core_id);
+  console_print_core(core_id, computer->cores[core_id].instruction_pointer);
   printf("ADDINC REG 0x%X, REG 0x%X, IMMEDIATE 0x%X\n", registers >> 4,
          registers & 0x0F, immediate);
 }
@@ -100,7 +100,7 @@ void SUBINC_handler(Computer *computer, uint8_t core_id) {
   set_register(core, registers >> 4, (uint16_t)result);
   set_zero_and_sign_flags(core, (uint16_t)result);
 
-  console_print_core(core_id);
+  console_print_core(core_id, computer->cores[core_id].instruction_pointer);
   printf("SUBINC REG 0x%X, REG 0x%X, IMMEDIATE 0x%X\n", registers >> 4,
          registers & 0x0F, immediate);
 }
@@ -122,7 +122,7 @@ void INC_handler(Computer *computer, uint8_t core_id) {
 
   set_register(core, register_id, (uint16_t)result);
   set_zero_and_sign_flags(core, (uint16_t)result);
-  console_print_core(core_id);
+  console_print_core(core_id, computer->cores[core_id].instruction_pointer);
   printf("INC REG 0x%X, IMMEDIATE 0x%X\n", register_id, increment);
 }
 
@@ -143,7 +143,7 @@ void DEC_handler(Computer *computer, uint8_t core_id) {
 
   set_register(core, register_id, (uint16_t)result);
   set_zero_and_sign_flags(core, (uint16_t)result);
-  console_print_core(core_id);
+  console_print_core(core_id, computer->cores[core_id].instruction_pointer);
   printf("DEC REG 0x%X, IMMEDIATE 0x%X\n", register_id, decrement);
 }
 
@@ -166,7 +166,7 @@ void ADDR_handler(Computer *computer, uint8_t core_id) {
   set_register(core, registers >> 4, (uint16_t)result);
   set_zero_and_sign_flags(core, (uint16_t)result);
 
-  console_print_core(core_id);
+  console_print_core(core_id, computer->cores[core_id].instruction_pointer);
   printf("ADDR REG 0x%X, REG 0x%X\n", registers >> 4, registers & 0x0F);
 }
 
@@ -189,7 +189,7 @@ void SUBR_handler(Computer *computer, uint8_t core_id) {
   set_register(core, registers >> 4, (uint16_t)result);
   set_zero_and_sign_flags(core, (uint16_t)result);
 
-  console_print_core(core_id);
+  console_print_core(core_id, computer->cores[core_id].instruction_pointer);
   printf("SUBR REG 0x%X, REG 0x%X\n", registers >> 4, registers & 0x0F);
 }
 
@@ -218,7 +218,7 @@ void ADDB_handler(Computer *computer, uint8_t core_id) {
   set_register(core, register_id, (uint16_t)result);
   set_zero_and_sign_flags(core, (uint16_t)result);
 
-  console_print_core(core_id);
+  console_print_core(core_id, computer->cores[core_id].instruction_pointer);
   printf("ADDB REG 0x%X, IMMEDIATE 0x%X\n", register_id, immediate);
 }
 
@@ -247,7 +247,7 @@ void SUBB_handler(Computer *computer, uint8_t core_id) {
   set_register(core, register_id, (uint16_t)result);
   set_zero_and_sign_flags(core, (uint16_t)result);
 
-  console_print_core(core_id);
+  console_print_core(core_id, computer->cores[core_id].instruction_pointer);
   printf("SUBB REG 0x%X, IMMEDIATE 0x%X\n", register_id, immediate);
 }
 
@@ -276,7 +276,7 @@ void ADDRR_handler(Computer *computer, uint8_t core_id) {
 
   set_register(core, register_id_1, (uint16_t)result);
   set_zero_and_sign_flags(core, (uint16_t)result);
-  console_print_core(core_id);
+  console_print_core(core_id, computer->cores[core_id].instruction_pointer);
   printf("ADDRR REG 0x%X, REG 0x%X, REG 0x%X\n", register_id_1, register_id_2,
          register_id_3);
 }
@@ -305,7 +305,7 @@ void SUBRR_handler(Computer *computer, uint8_t core_id) {
 
   set_register(core, register_id_1, (uint16_t)result);
   set_zero_and_sign_flags(core, (uint16_t)result);
-  console_print_core(core_id);
+  console_print_core(core_id, computer->cores[core_id].instruction_pointer);
   printf("SUBRR REG 0x%X, REG 0x%X, REG 0x%X\n", register_id_1, register_id_2,
          register_id_3);
 }

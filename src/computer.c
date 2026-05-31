@@ -13,10 +13,10 @@ void computer_init(Computer *self) {
 void computer_start(Computer *self) {
   printf("%sCOMPUTER START%s\n", CONSOLE_BLUE, CONSOLE_RESET);
   self->cores[0].instruction_pointer = memory_get_24(self, 0);
-  console_print_core(0);
+  console_print_core(0, self->cores[0].instruction_pointer);
   printf("INSTRUCTION VECTOR 0x%X\n", memory_get_24(self, 0));
   self->cores[0].awake = true;
-  console_print_core(0);
+  console_print_core(0, self->cores[0].instruction_pointer);
   printf("START\n");
 }
 
@@ -71,7 +71,7 @@ uint32_t memory_get_32(Computer *self, uint32_t index) {
 void computer_print(Computer *self) {
   for (uint8_t i = 0; i < COMPUTER_CORES; i++) {
     printf("--- ");
-    console_print_core(i);
+    console_print_core(i, self->cores[i].instruction_pointer);
     printf("---\n");
     core_print(&self->cores[i]);
   }

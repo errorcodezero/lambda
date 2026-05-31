@@ -337,3 +337,121 @@ void test(Computer *computer) {
   }
   printf("%sTests passed%s\n", CONSOLE_GREEN, CONSOLE_RESET);
 }
+
+void test_loop(Computer *computer) {
+  uint32_t write_addr = 0x010100;
+  // LDI R0, 10
+  computer->memory[write_addr++] = 0x32;
+  computer->memory[write_addr++] = 0x00;
+  computer->memory[write_addr++] = 0x0A;
+  computer->memory[write_addr++] = 0x00;
+  // LDI R1, 0
+  computer->memory[write_addr++] = 0x32;
+  computer->memory[write_addr++] = 0x01;
+  computer->memory[write_addr++] = 0x00;
+  computer->memory[write_addr++] = 0x00;
+  // Loop: INC R1, 1
+  uint32_t loop_start = write_addr;
+  computer->memory[write_addr++] = 0x10;
+  computer->memory[write_addr++] = 0x11;
+  // DEC R0, 1
+  computer->memory[write_addr++] = 0x11;
+  computer->memory[write_addr++] = 0x01;
+  // AJMPIGD loop_start
+  computer->memory[write_addr++] = 0x35;
+  computer->memory[write_addr++] = loop_start & 0xFF;
+  computer->memory[write_addr++] = (loop_start >> 8) & 0xFF;
+  computer->memory[write_addr++] = (loop_start >> 16) & 0xFF;
+  // HLT
+  computer->memory[write_addr++] = 0x00;
+
+  computer->memory[0] = 0x00;
+  computer->memory[1] = 0x01;
+  computer->memory[2] = 0x01;
+
+  computer_start(computer);
+  while (!computer->halted) {
+    computer_step(computer);
+    if (getenv("DEBUG") != NULL) {
+      computer_print(computer);
+    }
+  }
+
+  if (computer->cores[0].registers[0] != 0 ||
+      computer->cores[0].registers[1] != 10) {
+    fprintf(stderr,
+            "%sLoop test failed: R0=0x%X (expected 0) R1=0x%X (expected 10)%s\n",
+            CONSOLE_RED, computer->cores[0].registers[0],
+            computer->cores[0].registers[1], CONSOLE_RESET);
+    return;
+  }
+  printf("%sLoop test passed%s\n", CONSOLE_GREEN, CONSOLE_RESET);
+}
+
+void test_fib(Computer *computer) {
+  uint32_t write_addr = 0x010200;
+  // LDI R0, 0 (fibo n-2)
+  computer->memory[write_addr++] = 0x32;
+  computer->memory[write_addr++] = 0x00;
+  computer->memory[write_addr++] = 0x00;
+  computer->memory[write_addr++] = 0x00;
+  // LDI R1, 1 (fibo n-1)
+  computer->memory[write_addr++] = 0x32;
+  computer->memory[write_addr++] = 0x01;
+  computer->memory[write_addr++] = 0x01;
+  computer->memory[write_addr++] = 0x00;
+  // LDI R2, 10 (counter)
+  computer->memory[write_addr++] = 0x32;
+  computer->memory[write_addr++] = 0x02;
+  computer->memory[write_addr++] = 0x0A;
+  computer->memory[write_addr++] = 0x00;
+  // Loop: ADDRR R3, R0, R1  -> R3 = R0 + R1
+  uint32_t loop_start = write_addr;
+  computer->memory[write_addr++] = 0x2A;
+  computer->memory[write_addr++] = 0x03;
+  computer->memory[write_addr++] = 0x01;
+  // ADDI R0, R1, 0  -> R0 = R1
+  computer->memory[write_addr++] = 0x30;
+  computer->memory[write_addr++] = 0x01;
+  computer->memory[write_addr++] = 0x00;
+  computer->memory[write_addr++] = 0x00;
+  // ADDI R1, R3, 0  -> R1 = R3
+  computer->memory[write_addr++] = 0x30;
+  computer->memory[write_addr++] = 0x13;
+  computer->memory[write_addr++] = 0x00;
+  computer->memory[write_addr++] = 0x00;
+  // DEC R2, 1
+  computer->memory[write_addr++] = 0x11;
+  computer->memory[write_addr++] = 0x21;
+  // AJMPIGD loop_start
+  computer->memory[write_addr++] = 0x35;
+  computer->memory[write_addr++] = loop_start & 0xFF;
+  computer->memory[write_addr++] = (loop_start >> 8) & 0xFF;
+  computer->memory[write_addr++] = (loop_start >> 16) & 0xFF;
+  // HLT
+  computer->memory[write_addr++] = 0x00;
+
+  computer->memory[0] = 0x00;
+  computer->memory[1] = 0x02;
+  computer->memory[2] = 0x01;
+
+  computer_start(computer);
+  while (!computer->halted) {
+    computer_step(computer);
+    if (getenv("DEBUG") != NULL) {
+      computer_print(computer);
+    }
+  }
+
+  // After 10 iterations, R0 = F(10) = 55, R1 = F(11) = 89
+  if (computer->cores[0].registers[0] != 0x0037 ||
+      computer->cores[0].registers[1] != 0x0059) {
+    fprintf(stderr,
+            "%sFib test failed: R0=0x%X (expected 0x37) R1=0x%X (expected "
+            "0x59)%s\n",
+            CONSOLE_RED, computer->cores[0].registers[0],
+            computer->cores[0].registers[1], CONSOLE_RESET);
+    return;
+  }
+  printf("%sFib test passed%s\n", CONSOLE_GREEN, CONSOLE_RESET);
+}

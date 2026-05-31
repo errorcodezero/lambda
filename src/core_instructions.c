@@ -28,7 +28,7 @@ void HLT_handler(Computer *computer, uint8_t core_id) {
   for (uint8_t i = 0; i < COMPUTER_CORES; i++) {
     computer_awake |= computer->cores[i].awake;
   }
-  console_print_core(core_id);
+  console_print_core(core_id, computer->cores[core_id].instruction_pointer);
   printf("HLT\n");
   if (!computer_awake) {
     printf("%sCOMPUTER STOPPED%s\n", CONSOLE_BLUE, CONSOLE_RESET);
@@ -43,7 +43,7 @@ void LDI_handler(Computer *computer, uint8_t core_id) {
   uint16_t immediate = memory_get_16(computer, core->instruction_pointer + 2);
 
   set_register(core, register_id, immediate);
-  console_print_core(core_id);
+  console_print_core(core_id, computer->cores[core_id].instruction_pointer);
   printf("LDI REG 0x%X, IMMEDIATE 0x%X\n", register_id, immediate);
 }
 
@@ -60,7 +60,7 @@ void RLD_handler(Computer *computer, uint8_t core_id) {
     memory_address = memory_get_24(computer, memory_address);
   set_register(core, register_id, memory_get_16(computer, memory_address));
 
-  console_print_core(core_id);
+  console_print_core(core_id, computer->cores[core_id].instruction_pointer);
   printf("RLD %s, REG 0x%X, MEMORY ADDRESS 0x%X\n",
          (indirection ? "WITH INDIRECTION" : "WITHOUT INDIRECTION"),
          register_id, original_memory_address);
@@ -78,7 +78,7 @@ void ALD_handler(Computer *computer, uint8_t core_id) {
     memory_address = memory_get_24(computer, memory_address);
   set_register(core, register_id, memory_get_16(computer, memory_address));
 
-  console_print_core(core_id);
+  console_print_core(core_id, computer->cores[core_id].instruction_pointer);
   printf("ALD %s, REG 0x%X, MEMORY ADDRESS 0x%X\n",
          (indirection ? "WITH INDIRECTION" : "WITHOUT INDIRECTION"),
          register_id, original_memory_address);
@@ -91,7 +91,7 @@ void TJMP_handler(Computer *computer, uint8_t core_id) {
   core->instruction_pointer += index;
   core->jumped = true;
 
-  console_print_core(core_id);
+  console_print_core(core_id, computer->cores[core_id].instruction_pointer);
   printf("TJMP 0x%X %s\n", (index >= 0) ? index : (index * -1),
          (index >= 0) ? "FORWARDS" : "BACKWARDS");
 }
@@ -132,7 +132,7 @@ void ALM_handler(Computer *computer, uint8_t core_id) {
     return;
   }
 
-  console_print_core(core_id);
+  console_print_core(core_id, computer->cores[core_id].instruction_pointer);
   printf(
       "ALM %s, %s, REG 0x%X, MEMORY ADDRESS 0x%X\n",
       ((flag == 2 || flag == 3) ? "WITH INDIRECTION" : "WITHOUT INDIRECTION"),
@@ -176,7 +176,7 @@ void RLM_handler(Computer *computer, uint8_t core_id) {
     return;
   }
 
-  console_print_core(core_id);
+  console_print_core(core_id, computer->cores[core_id].instruction_pointer);
   printf(
       "RLM %s, %s, REG 0x%X, MEMORY ADDRESS 0x%X\n",
       ((flag == 2 || flag == 3) ? "WITH INDIRECTION" : "WITHOUT INDIRECTION"),
@@ -196,7 +196,7 @@ void MWR_handler(Computer *computer, uint8_t core_id) {
   computer->memory[memory + 1] =
       core_register_get_rx(core->registers[register_id_2]);
 
-  console_print_core(core_id);
+  console_print_core(core_id, computer->cores[core_id].instruction_pointer);
   printf("MWR REG 0x%X, REG 0x%X\n", register_id_1, register_id_2);
 }
 
@@ -214,7 +214,7 @@ void MIWR_handler(Computer *computer, uint8_t core_id) {
   computer->memory[new_memory + 1] =
       core_register_get_rx(core->registers[register_id_2]);
 
-  console_print_core(core_id);
+  console_print_core(core_id, computer->cores[core_id].instruction_pointer);
   printf("MIWR REG 0x%X, REG 0x%X\n", register_id_1, register_id_2);
 }
 
@@ -238,7 +238,7 @@ void AJMPIZD_handler(Computer *computer, uint8_t core_id) {
   absolute_jump_helper(computer, core, memory, false,
                        (zero_flag && !sign_flag));
 
-  console_print_core(core_id);
+  console_print_core(core_id, computer->cores[core_id].instruction_pointer);
   printf("AJMPIZD MEMORY ADDRESS 0x%X\n", memory);
 }
 
@@ -250,7 +250,7 @@ void AJMPIZI_handler(Computer *computer, uint8_t core_id) {
 
   absolute_jump_helper(computer, core, memory, true, (zero_flag && !sign_flag));
 
-  console_print_core(core_id);
+  console_print_core(core_id, computer->cores[core_id].instruction_pointer);
   printf("AJMPIZI MEMORY ADDRESS 0x%X\n", memory);
 }
 
@@ -263,7 +263,7 @@ void AJMPIGD_handler(Computer *computer, uint8_t core_id) {
   absolute_jump_helper(computer, core, memory, false,
                        (!zero_flag && !sign_flag));
 
-  console_print_core(core_id);
+  console_print_core(core_id, computer->cores[core_id].instruction_pointer);
   printf("AJMPIGD MEMORY ADDRESS 0x%X\n", memory);
 }
 
@@ -276,7 +276,7 @@ void AJMPIGI_handler(Computer *computer, uint8_t core_id) {
   absolute_jump_helper(computer, core, memory, true,
                        (!zero_flag && !sign_flag));
 
-  console_print_core(core_id);
+  console_print_core(core_id, computer->cores[core_id].instruction_pointer);
   printf("AJMPIGI MEMORY ADDRESS 0x%X\n", memory);
 }
 
@@ -289,7 +289,7 @@ void AJMPILD_handler(Computer *computer, uint8_t core_id) {
   absolute_jump_helper(computer, core, memory, false,
                        (!zero_flag && sign_flag));
 
-  console_print_core(core_id);
+  console_print_core(core_id, computer->cores[core_id].instruction_pointer);
   printf("AJMPILD MEMORY ADDRESS 0x%X\n", memory);
 }
 
@@ -301,6 +301,6 @@ void AJMPILI_handler(Computer *computer, uint8_t core_id) {
 
   absolute_jump_helper(computer, core, memory, true, (!zero_flag && sign_flag));
 
-  console_print_core(core_id);
+  console_print_core(core_id, computer->cores[core_id].instruction_pointer);
   printf("AJMPILI MEMORY ADDRESS 0x%X\n", memory);
 }

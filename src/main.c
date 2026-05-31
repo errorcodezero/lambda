@@ -8,8 +8,8 @@
 
 int main(int argc, char *argv[]) {
   Computer *computer = calloc(1, sizeof(Computer));
-  if (argc < 2) {
-    printf("Usage\n%s test\n%s run [file]\n", argv[0], argv[0]);
+  if (argc != 3) {
+    printf("Usage\n%s test [test name]\n%s run [file]\n", argv[0], argv[0]);
     return EXIT_FAILURE;
   }
   if (!computer) {
@@ -19,10 +19,16 @@ int main(int argc, char *argv[]) {
   computer_init(computer);
 
   if (strcmp(argv[1], "test") == 0) {
-    test(computer);
+    if (strcmp(argv[2], "loop") == 0) {
+      test_loop(computer);
+    } else if (strcmp(argv[2], "fib") == 0) {
+      test_fib(computer);
+    } else if (strcmp(argv[2], "main")) {
+      test(computer);
+    }
   } else if (strcmp(argv[1], "run") == 0) {
     if (argc != 3) {
-      printf("Usage\n%s test\n%s run [file]\n", argv[0], argv[0]);
+      printf("Usage\n%s test [test name]\n%s run [file]\n", argv[0], argv[0]);
       return EXIT_FAILURE;
     }
     FILE *file = fopen(argv[2], "rb");
@@ -45,7 +51,7 @@ int main(int argc, char *argv[]) {
     }
 
   } else {
-    printf("Usage\n%s test\n%s run [file]\n", argv[0], argv[0]);
+    printf("Usage\n%s test [test name]\n%s run [file]\n", argv[0], argv[0]);
   }
 
   free(computer);

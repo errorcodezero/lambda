@@ -12,5 +12,5 @@
 #define CONSOLE_WHITE "\033[37m"
 #define CONSOLE_RESET "\033[0m"
 
-void console_print_core(uint8_t id);
+void console_print_core(uint8_t id, uint32_t instruction_pointer);
 #endif

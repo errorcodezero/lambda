@@ -28,7 +28,7 @@ void XORR_handler(Computer *computer, uint8_t core_id) {
   set_register(core, register_id_1,
                core->registers[register_id_1] ^ core->registers[register_id_2]);
 
-  console_print_core(core_id);
+  console_print_core(core_id, computer->cores[core_id].instruction_pointer);
   printf("XORR REG 0x%X, REG 0x%X\n", register_id_1, register_id_2);
 }
 
@@ -42,7 +42,7 @@ void ANDR_handler(Computer *computer, uint8_t core_id) {
   set_register(core, register_id_1,
                core->registers[register_id_1] & core->registers[register_id_2]);
 
-  console_print_core(core_id);
+  console_print_core(core_id, computer->cores[core_id].instruction_pointer);
   printf("ANDR REG 0x%X, REG 0x%X\n", register_id_1, register_id_2);
 }
 
@@ -55,7 +55,7 @@ void NOTR_handler(Computer *computer, uint8_t core_id) {
 
   set_register(core, register_id_1, ~core->registers[register_id_2]);
 
-  console_print_core(core_id);
+  console_print_core(core_id, computer->cores[core_id].instruction_pointer);
   printf("NOTR REG 0x%X, REG 0x%X\n", register_id_1, register_id_2);
 }
 
@@ -69,7 +69,7 @@ void ORR_handler(Computer *computer, uint8_t core_id) {
   set_register(core, register_id_1,
                core->registers[register_id_1] | core->registers[register_id_2]);
 
-  console_print_core(core_id);
+  console_print_core(core_id, computer->cores[core_id].instruction_pointer);
   printf("ORR REG 0x%X, REG 0x%X\n", register_id_1, register_id_2);
 }
 
@@ -84,7 +84,7 @@ void NORR_handler(Computer *computer, uint8_t core_id) {
       core, register_id_1,
       ~(core->registers[register_id_1] | core->registers[register_id_2]));
 
-  console_print_core(core_id);
+  console_print_core(core_id, computer->cores[core_id].instruction_pointer);
   printf("NORR REG 0x%X, REG 0x%X\n", register_id_1, register_id_2);
 }
 
@@ -99,7 +99,7 @@ void NANDR_handler(Computer *computer, uint8_t core_id) {
       core, register_id_1,
       ~(core->registers[register_id_1] & core->registers[register_id_2]));
 
-  console_print_core(core_id);
+  console_print_core(core_id, computer->cores[core_id].instruction_pointer);
   printf("NANDR REG 0x%X, REG 0x%X\n", register_id_1, register_id_2);
 }
 
@@ -114,7 +114,7 @@ void XNORR_handler(Computer *computer, uint8_t core_id) {
       core, register_id_1,
       ~(core->registers[register_id_1] ^ core->registers[register_id_2]));
 
-  console_print_core(core_id);
+  console_print_core(core_id, computer->cores[core_id].instruction_pointer);
   printf("XNORR REG 0x%X, REG 0x%X\n", register_id_1, register_id_2);
 }
 
@@ -125,7 +125,7 @@ void LSHFT_handler(Computer *computer, uint8_t core_id) {
       memory_get(computer, core->instruction_pointer + 1) & 0x0F;
 
   set_register(core, register_id, core->registers[register_id] << shift);
-  console_print_core(core_id);
+  console_print_core(core_id, computer->cores[core_id].instruction_pointer);
   printf("LSHFT SHIFT 0x%X, REG 0x%X\n", shift, register_id);
 }
 
@@ -136,7 +136,7 @@ void RSHFT_handler(Computer *computer, uint8_t core_id) {
       memory_get(computer, core->instruction_pointer + 1) & 0x0F;
 
   set_register(core, register_id, core->registers[register_id] >> shift);
-  console_print_core(core_id);
+  console_print_core(core_id, computer->cores[core_id].instruction_pointer);
   printf("RSHFT SHIFT 0x%X, REG 0x%X\n", shift, register_id);
 }
 
@@ -182,7 +182,7 @@ void XANOR_handler(Computer *computer, uint8_t core_id) {
   }
 
   set_register(core, register_id_1, result);
-  console_print_core(core_id);
+  console_print_core(core_id, computer->cores[core_id].instruction_pointer);
   printf("XANOR REG 0x%X, REG 0x%X, REG 0x%X\n", register_id_1, register_id_2,
          register_id_3);
 }
