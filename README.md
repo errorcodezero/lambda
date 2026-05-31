@@ -76,12 +76,12 @@ This is in hexadecimal and for simplicity, I'm avoiding prefixing all values wit
 - [X] `ADDI` - Add Immediate - `30 RR II II`
 - [X] `SUBI` - Subtract Immediate - `31 RR II II`
 - [X] `LDI` - Load Immediate - `32 0R NN NN`
-- `AJMPIZD` - Absolute Jump If Zero Direct - `33 MM MM MM`
-- `AJMPIZI` - Absolute Jump If Zero Indirect - `34 MM MM MM`
-- `AJMPIGD` - Absolute Jump If Greater Direct - `35 MM MM MM`
-- `AJMPIGI` - Absolute Jump If Greater Indirect - `36 MM MM MM`
-- `AJMPILD` - Absolute Jump If Lesser Direct - `37 MM MM MM`
-- `AJMPILI` - Absolute Jump If Lesser Indirect - `38 MM MM MM`
+- [X] `AJMPIZD` - Absolute Jump If Zero Direct - `33 MM MM MM`
+- [X] `AJMPIZI` - Absolute Jump If Zero Indirect - `34 MM MM MM`
+- [X] `AJMPIGD` - Absolute Jump If Greater Direct - `35 MM MM MM`
+- [X] `AJMPIGI` - Absolute Jump If Greater Indirect - `36 MM MM MM`
+- [X] `AJMPILD` - Absolute Jump If Lesser Direct - `37 MM MM MM`
+- [X] `AJMPILI` - Absolute Jump If Lesser Indirect - `38 MM MM MM`
 - [X] `RLD` - Relative Load - `39 SR MM MM`*
 - [X] `RLM` - Relative Move - `3A SR MM MM` - 0 for S means one byte, no indirection, 1 means two bytes, no indirection, 2 means 1 byte with indirection, 3 means 2 byte with indirection
 - `DMUTAM` - Delete Mutex Absolute Memory - `C0 MM MM MM` - If the given memory address is within range of a mutex, it nullifies that mutex within the mutex table.

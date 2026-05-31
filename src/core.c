@@ -47,3 +47,14 @@ void set_register(Core *self, uint8_t reg_id, uint16_t data) {
     self->registers[reg_id] = data;
   }
 }
+
+void set_zero_and_sign_flags(Core *self, uint16_t data) {
+  if (data == 0)
+    self->registers[STATUS_REGISTER] |= ZERO_FLAG;
+  else
+    self->registers[STATUS_REGISTER] &= ~ZERO_FLAG;
+  if (data & 0x8000)
+    self->registers[STATUS_REGISTER] |= SIGN_FLAG;
+  else
+    self->registers[STATUS_REGISTER] &= ~SIGN_FLAG;
+}

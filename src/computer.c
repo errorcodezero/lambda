@@ -27,11 +27,16 @@ void computer_step_core(Computer *self, uint8_t core_id) {
     self->cores[core_id].registers[STATUS_REGISTER] &= 0x00FF;
     self->cores[core_id].registers[BANK_REGISTER] &= 0x00FF;
     self->cores[core_id].registers[ZERO_REGISTER] = 0;
-	// Auto incrementation of the instruction pointer works since the length of an instruction is encoded within the first nibble.
+    // Auto incrementation of the instruction pointer works since the length of
+    // an instruction is encoded within the first nibble.
     self->instructions[memory_get(
         self, self->cores[core_id].instruction_pointer)](self, core_id);
-    self->cores[core_id].instruction_pointer +=
-        (((self->memory[self->cores[core_id].instruction_pointer] >> 4) % 9) + 1);
+    if (!self->cores[core_id].jumped)
+      self->cores[core_id].instruction_pointer +=
+          (((self->memory[self->cores[core_id].instruction_pointer] >> 4) % 9) +
+           1);
+    else
+      self->cores[core_id].jumped = false;
   }
 }
 

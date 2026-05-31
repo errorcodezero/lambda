@@ -14,6 +14,12 @@ void setup_core_instructions(Computer *computer) {
   computer->instructions[I_RLM] = RLM_handler;
   computer->instructions[I_MWR] = MWR_handler;
   computer->instructions[I_MIWR] = MIWR_handler;
+  computer->instructions[I_AJMPIZD] = AJMPIZD_handler;
+  computer->instructions[I_AJMPIZI] = AJMPIZI_handler;
+  computer->instructions[I_AJMPIGD] = AJMPIGD_handler;
+  computer->instructions[I_AJMPIGI] = AJMPIGI_handler;
+  computer->instructions[I_AJMPILD] = AJMPILD_handler;
+  computer->instructions[I_AJMPILI] = AJMPILI_handler;
 }
 
 void HLT_handler(Computer *computer, uint8_t core_id) {
@@ -83,6 +89,7 @@ void TJMP_handler(Computer *computer, uint8_t core_id) {
   int8_t index = memory_get(computer, core->instruction_pointer + 1);
 
   core->instruction_pointer += index;
+  core->jumped = true;
 
   console_print_core(core_id);
   printf("TJMP 0x%X %s\n", (index >= 0) ? index : (index * -1),
@@ -178,11 +185,16 @@ void RLM_handler(Computer *computer, uint8_t core_id) {
 
 void MWR_handler(Computer *computer, uint8_t core_id) {
   Core *core = &computer->cores[core_id];
-  uint8_t register_id_1 = memory_get(computer, core->instruction_pointer + 1) >> 4;
-  uint8_t register_id_2 = memory_get(computer, core->instruction_pointer + 1) & 0x0F;
-  uint32_t memory = (((uint32_t) core->registers[BANK_REGISTER]) << 16) + core->registers[register_id_1];
-  computer->memory[memory] = core_register_get_ry(core->registers[register_id_2]);
-  computer->memory[memory + 1] = core_register_get_rx(core->registers[register_id_2]);
+  uint8_t register_id_1 =
+      memory_get(computer, core->instruction_pointer + 1) >> 4;
+  uint8_t register_id_2 =
+      memory_get(computer, core->instruction_pointer + 1) & 0x0F;
+  uint32_t memory = (((uint32_t)core->registers[BANK_REGISTER]) << 16) +
+                    core->registers[register_id_1];
+  computer->memory[memory] =
+      core_register_get_ry(core->registers[register_id_2]);
+  computer->memory[memory + 1] =
+      core_register_get_rx(core->registers[register_id_2]);
 
   console_print_core(core_id);
   printf("MWR REG 0x%X, REG 0x%X\n", register_id_1, register_id_2);
@@ -190,13 +202,105 @@ void MWR_handler(Computer *computer, uint8_t core_id) {
 
 void MIWR_handler(Computer *computer, uint8_t core_id) {
   Core *core = &computer->cores[core_id];
-  uint8_t register_id_1 = memory_get(computer, core->instruction_pointer + 1) >> 4;
-  uint8_t register_id_2 = memory_get(computer, core->instruction_pointer + 1) & 0x0F;
-  uint32_t memory = (((uint32_t) core->registers[BANK_REGISTER]) << 16) + core->registers[register_id_1];
+  uint8_t register_id_1 =
+      memory_get(computer, core->instruction_pointer + 1) >> 4;
+  uint8_t register_id_2 =
+      memory_get(computer, core->instruction_pointer + 1) & 0x0F;
+  uint32_t memory = (((uint32_t)core->registers[BANK_REGISTER]) << 16) +
+                    core->registers[register_id_1];
   uint32_t new_memory = memory_get_24(computer, memory);
-  computer->memory[new_memory] = core_register_get_ry(core->registers[register_id_2]);
-  computer->memory[new_memory + 1] = core_register_get_rx(core->registers[register_id_2]);
+  computer->memory[new_memory] =
+      core_register_get_ry(core->registers[register_id_2]);
+  computer->memory[new_memory + 1] =
+      core_register_get_rx(core->registers[register_id_2]);
 
   console_print_core(core_id);
   printf("MIWR REG 0x%X, REG 0x%X\n", register_id_1, register_id_2);
+}
+
+void absolute_jump_helper(Computer *computer, Core *core, uint32_t memory,
+                          bool indirection, bool condition) {
+  if (!condition)
+    return;
+  if (indirection)
+    memory = memory_get_24(computer, memory);
+
+  core->instruction_pointer = memory;
+  core->jumped = true;
+}
+
+void AJMPIZD_handler(Computer *computer, uint8_t core_id) {
+  Core *core = &computer->cores[core_id];
+  uint8_t zero_flag = core->registers[STATUS_REGISTER] & ZERO_FLAG;
+  uint8_t sign_flag = core->registers[STATUS_REGISTER] & SIGN_FLAG;
+  uint32_t memory = memory_get_24(computer, core->instruction_pointer + 1);
+
+  absolute_jump_helper(computer, core, memory, false,
+                       (zero_flag && !sign_flag));
+
+  console_print_core(core_id);
+  printf("AJMPIZD MEMORY ADDRESS 0x%X\n", memory);
+}
+
+void AJMPIZI_handler(Computer *computer, uint8_t core_id) {
+  Core *core = &computer->cores[core_id];
+  uint8_t zero_flag = core->registers[STATUS_REGISTER] & ZERO_FLAG;
+  uint8_t sign_flag = core->registers[STATUS_REGISTER] & SIGN_FLAG;
+  uint32_t memory = memory_get_24(computer, core->instruction_pointer + 1);
+
+  absolute_jump_helper(computer, core, memory, true, (zero_flag && !sign_flag));
+
+  console_print_core(core_id);
+  printf("AJMPIZI MEMORY ADDRESS 0x%X\n", memory);
+}
+
+void AJMPIGD_handler(Computer *computer, uint8_t core_id) {
+  Core *core = &computer->cores[core_id];
+  uint8_t zero_flag = core->registers[STATUS_REGISTER] & ZERO_FLAG;
+  uint8_t sign_flag = core->registers[STATUS_REGISTER] & SIGN_FLAG;
+  uint32_t memory = memory_get_24(computer, core->instruction_pointer + 1);
+
+  absolute_jump_helper(computer, core, memory, false,
+                       (!zero_flag && !sign_flag));
+
+  console_print_core(core_id);
+  printf("AJMPIGD MEMORY ADDRESS 0x%X\n", memory);
+}
+
+void AJMPIGI_handler(Computer *computer, uint8_t core_id) {
+  Core *core = &computer->cores[core_id];
+  uint8_t zero_flag = core->registers[STATUS_REGISTER] & ZERO_FLAG;
+  uint8_t sign_flag = core->registers[STATUS_REGISTER] & SIGN_FLAG;
+  uint32_t memory = memory_get_24(computer, core->instruction_pointer + 1);
+
+  absolute_jump_helper(computer, core, memory, true,
+                       (!zero_flag && !sign_flag));
+
+  console_print_core(core_id);
+  printf("AJMPIGI MEMORY ADDRESS 0x%X\n", memory);
+}
+
+void AJMPILD_handler(Computer *computer, uint8_t core_id) {
+  Core *core = &computer->cores[core_id];
+  uint8_t zero_flag = core->registers[STATUS_REGISTER] & ZERO_FLAG;
+  uint8_t sign_flag = core->registers[STATUS_REGISTER] & SIGN_FLAG;
+  uint32_t memory = memory_get_24(computer, core->instruction_pointer + 1);
+
+  absolute_jump_helper(computer, core, memory, false,
+                       (!zero_flag && sign_flag));
+
+  console_print_core(core_id);
+  printf("AJMPILD MEMORY ADDRESS 0x%X\n", memory);
+}
+
+void AJMPILI_handler(Computer *computer, uint8_t core_id) {
+  Core *core = &computer->cores[core_id];
+  uint8_t zero_flag = core->registers[STATUS_REGISTER] & ZERO_FLAG;
+  uint8_t sign_flag = core->registers[STATUS_REGISTER] & SIGN_FLAG;
+  uint32_t memory = memory_get_24(computer, core->instruction_pointer + 1);
+
+  absolute_jump_helper(computer, core, memory, true, (!zero_flag && sign_flag));
+
+  console_print_core(core_id);
+  printf("AJMPILI MEMORY ADDRESS 0x%X\n", memory);
 }

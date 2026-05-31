@@ -1,6 +1,7 @@
 #include "arithmetic_instructions.h"
 #include "computer.h"
 #include "console.h"
+#include "core.h"
 #include "instructions.h"
 #include "stdint.h"
 #include <stdio.h>
@@ -27,18 +28,19 @@ void ADDI_handler(Computer *computer, uint8_t core_id) {
   uint16_t operand = core->registers[registers & 0x0F];
 
   // See if the carry flag is used and if so, add 1 to the result
-  uint8_t carry = (core->registers[STATUS_REGISTER] & 0x08) ? 1 : 0;
+  uint8_t carry = (core->registers[STATUS_REGISTER] & CARRY_FLAG) ? 1 : 0;
 
   uint32_t result = (uint32_t)operand + (uint32_t)immediate + carry;
 
   // Carry flag
   if (result > 0xFFFF) {
-    core->registers[STATUS_REGISTER] |= 0x08;
+    core->registers[STATUS_REGISTER] |= CARRY_FLAG;
   } else {
-    core->registers[STATUS_REGISTER] &= ~0x08;
+    core->registers[STATUS_REGISTER] &= ~CARRY_FLAG;
   }
 
   set_register(core, registers >> 4, (uint16_t)result);
+  set_zero_and_sign_flags(core, (uint16_t)result);
 
   console_print_core(core_id);
   printf("ADDI REG 0x%X, REG 0x%X, IMMEDIATE 0x%X\n", registers >> 4,
@@ -52,18 +54,19 @@ void SUBI_handler(Computer *computer, uint8_t core_id) {
   uint16_t operand = core->registers[registers & 0x0F];
 
   // See if the carry flag is used and if so, subtract 1 from the result
-  uint8_t carry = (core->registers[STATUS_REGISTER] & 0x08) ? 1 : 0;
+  uint8_t carry = (core->registers[STATUS_REGISTER] & CARRY_FLAG) ? 1 : 0;
 
   uint32_t result = (uint32_t)operand - (uint32_t)immediate - carry;
 
   // Carry flag
   if (result > 0xFFFF) {
-    core->registers[STATUS_REGISTER] |= 0x08;
+    core->registers[STATUS_REGISTER] |= CARRY_FLAG;
   } else {
-    core->registers[STATUS_REGISTER] &= ~0x08;
+    core->registers[STATUS_REGISTER] &= ~CARRY_FLAG;
   }
 
   set_register(core, registers >> 4, (uint16_t)result);
+  set_zero_and_sign_flags(core, (uint16_t)result);
 
   console_print_core(core_id);
   printf("SUBI REG 0x%X, REG 0x%X, IMMEDIATE 0x%X\n", registers >> 4,
@@ -79,6 +82,7 @@ void ADDINC_handler(Computer *computer, uint8_t core_id) {
   uint32_t result = (uint32_t)operand + (uint32_t)immediate;
 
   set_register(core, registers >> 4, (uint16_t)result);
+  set_zero_and_sign_flags(core, (uint16_t)result);
 
   console_print_core(core_id);
   printf("ADDINC REG 0x%X, REG 0x%X, IMMEDIATE 0x%X\n", registers >> 4,
@@ -94,6 +98,7 @@ void SUBINC_handler(Computer *computer, uint8_t core_id) {
   uint32_t result = (uint32_t)operand - (uint32_t)immediate;
 
   set_register(core, registers >> 4, (uint16_t)result);
+  set_zero_and_sign_flags(core, (uint16_t)result);
 
   console_print_core(core_id);
   printf("SUBINC REG 0x%X, REG 0x%X, IMMEDIATE 0x%X\n", registers >> 4,
@@ -110,12 +115,13 @@ void INC_handler(Computer *computer, uint8_t core_id) {
   uint32_t result = (uint32_t)operand + (uint32_t)increment;
 
   if (result > 0xFFFF) {
-    core->registers[STATUS_REGISTER] |= 0x02;
+    core->registers[STATUS_REGISTER] |= CARRY_FLAG;
   } else {
-    core->registers[STATUS_REGISTER] &= ~0x02;
+    core->registers[STATUS_REGISTER] &= ~CARRY_FLAG;
   }
 
   set_register(core, register_id, (uint16_t)result);
+  set_zero_and_sign_flags(core, (uint16_t)result);
   console_print_core(core_id);
   printf("INC REG 0x%X, IMMEDIATE 0x%X\n", register_id, increment);
 }
@@ -130,12 +136,13 @@ void DEC_handler(Computer *computer, uint8_t core_id) {
   uint32_t result = (uint32_t)operand - (uint32_t)decrement;
 
   if (result > 0xFFFF) {
-    core->registers[STATUS_REGISTER] |= 0x02;
+    core->registers[STATUS_REGISTER] |= CARRY_FLAG;
   } else {
-    core->registers[STATUS_REGISTER] &= ~0x02;
+    core->registers[STATUS_REGISTER] &= ~CARRY_FLAG;
   }
 
   set_register(core, register_id, (uint16_t)result);
+  set_zero_and_sign_flags(core, (uint16_t)result);
   console_print_core(core_id);
   printf("DEC REG 0x%X, IMMEDIATE 0x%X\n", register_id, decrement);
 }
@@ -145,18 +152,19 @@ void ADDR_handler(Computer *computer, uint8_t core_id) {
   uint8_t registers = memory_get(computer, core->instruction_pointer + 1);
 
   // See if the carry flag is used and if so, add 1 to the result
-  uint8_t carry = (core->registers[STATUS_REGISTER] & 0x08) ? 1 : 0;
+  uint8_t carry = (core->registers[STATUS_REGISTER] & CARRY_FLAG) ? 1 : 0;
   uint32_t result = ((uint32_t)core->registers[registers >> 4]) +
                     ((uint32_t)core->registers[registers & 0x0F]) + carry;
 
   // Carry flag
   if (result > 0xFFFF) {
-    core->registers[STATUS_REGISTER] |= 0x08;
+    core->registers[STATUS_REGISTER] |= CARRY_FLAG;
   } else {
-    core->registers[STATUS_REGISTER] &= ~0x08;
+    core->registers[STATUS_REGISTER] &= ~CARRY_FLAG;
   }
 
   set_register(core, registers >> 4, (uint16_t)result);
+  set_zero_and_sign_flags(core, (uint16_t)result);
 
   console_print_core(core_id);
   printf("ADDR REG 0x%X, REG 0x%X\n", registers >> 4, registers & 0x0F);
@@ -167,18 +175,19 @@ void SUBR_handler(Computer *computer, uint8_t core_id) {
   uint8_t registers = memory_get(computer, core->instruction_pointer + 1);
 
   // See if the carry flag is used and if so, subtract 1 from the result
-  uint8_t carry = (core->registers[STATUS_REGISTER] & 0x08) ? 1 : 0;
+  uint8_t carry = (core->registers[STATUS_REGISTER] & CARRY_FLAG) ? 1 : 0;
   uint32_t result = ((uint32_t)core->registers[registers >> 4]) -
                     ((uint32_t)core->registers[registers & 0x0F]) - carry;
 
   // Carry flag
   if (result > 0xFFFF) {
-    core->registers[STATUS_REGISTER] |= 0x08;
+    core->registers[STATUS_REGISTER] |= CARRY_FLAG;
   } else {
-    core->registers[STATUS_REGISTER] &= ~0x08;
+    core->registers[STATUS_REGISTER] &= ~CARRY_FLAG;
   }
 
   set_register(core, registers >> 4, (uint16_t)result);
+  set_zero_and_sign_flags(core, (uint16_t)result);
 
   console_print_core(core_id);
   printf("SUBR REG 0x%X, REG 0x%X\n", registers >> 4, registers & 0x0F);
@@ -194,19 +203,20 @@ void ADDB_handler(Computer *computer, uint8_t core_id) {
   uint16_t immediate = (immediate_high << 8) | immediate_low;
 
   // See if the carry flag is used and if so, add 1 to the result
-  uint8_t carry = (core->registers[STATUS_REGISTER] & 0x08) ? 1 : 0;
+  uint8_t carry = (core->registers[STATUS_REGISTER] & CARRY_FLAG) ? 1 : 0;
 
   uint32_t result =
       (uint32_t)core->registers[register_id] + (uint32_t)immediate + carry;
 
   // Carry flag
   if (result > 0xFFFF) {
-    core->registers[STATUS_REGISTER] |= 0x08;
+    core->registers[STATUS_REGISTER] |= CARRY_FLAG;
   } else {
-    core->registers[STATUS_REGISTER] &= ~0x08;
+    core->registers[STATUS_REGISTER] &= ~CARRY_FLAG;
   }
 
   set_register(core, register_id, (uint16_t)result);
+  set_zero_and_sign_flags(core, (uint16_t)result);
 
   console_print_core(core_id);
   printf("ADDB REG 0x%X, IMMEDIATE 0x%X\n", register_id, immediate);
@@ -222,19 +232,20 @@ void SUBB_handler(Computer *computer, uint8_t core_id) {
   uint16_t immediate = (immediate_high << 8) | immediate_low;
 
   // See if the carry flag is used and if so, subtract 1 from the result
-  uint8_t carry = (core->registers[STATUS_REGISTER] & 0x08) ? 1 : 0;
+  uint8_t carry = (core->registers[STATUS_REGISTER] & CARRY_FLAG) ? 1 : 0;
 
   uint32_t result =
       (uint32_t)core->registers[register_id] - (uint32_t)immediate - carry;
 
   // Carry flag
   if (result > 0xFFFF) {
-    core->registers[STATUS_REGISTER] |= 0x08;
+    core->registers[STATUS_REGISTER] |= CARRY_FLAG;
   } else {
-    core->registers[STATUS_REGISTER] &= ~0x08;
+    core->registers[STATUS_REGISTER] &= ~CARRY_FLAG;
   }
 
   set_register(core, register_id, (uint16_t)result);
+  set_zero_and_sign_flags(core, (uint16_t)result);
 
   console_print_core(core_id);
   printf("SUBB REG 0x%X, IMMEDIATE 0x%X\n", register_id, immediate);
@@ -255,15 +266,16 @@ void ADDRR_handler(Computer *computer, uint8_t core_id) {
   uint32_t result = (uint32_t)val2 + (uint32_t)val3;
 
   if (flag != 0) {
-    result += (core->registers[STATUS_REGISTER] & 0x08) ? 1 : 0;
+    result += (core->registers[STATUS_REGISTER] & CARRY_FLAG) ? 1 : 0;
     if (result > 0xFFFF) {
-      core->registers[STATUS_REGISTER] |= 0x08;
+      core->registers[STATUS_REGISTER] |= CARRY_FLAG;
     } else {
-      core->registers[STATUS_REGISTER] &= ~0x08;
+      core->registers[STATUS_REGISTER] &= ~CARRY_FLAG;
     }
   }
 
   set_register(core, register_id_1, (uint16_t)result);
+  set_zero_and_sign_flags(core, (uint16_t)result);
   console_print_core(core_id);
   printf("ADDRR REG 0x%X, REG 0x%X, REG 0x%X\n", register_id_1, register_id_2,
          register_id_3);
@@ -283,15 +295,16 @@ void SUBRR_handler(Computer *computer, uint8_t core_id) {
       core->registers[register_id_2] - core->registers[register_id_3];
 
   if (flag != 0) {
-    result -= (core->registers[STATUS_REGISTER] & 0x08) ? 1 : 0;
+    result -= (core->registers[STATUS_REGISTER] & CARRY_FLAG) ? 1 : 0;
     if (result > 0xFFFF) {
-      core->registers[STATUS_REGISTER] |= 0x08;
+      core->registers[STATUS_REGISTER] |= CARRY_FLAG;
     } else {
-      core->registers[STATUS_REGISTER] &= ~0x08;
+      core->registers[STATUS_REGISTER] &= ~CARRY_FLAG;
     }
   }
 
   set_register(core, register_id_1, (uint16_t)result);
+  set_zero_and_sign_flags(core, (uint16_t)result);
   console_print_core(core_id);
   printf("SUBRR REG 0x%X, REG 0x%X, REG 0x%X\n", register_id_1, register_id_2,
          register_id_3);
