@@ -109,6 +109,27 @@ This is in hexadecimal and for simplicity, I'm avoiding prefixing all values wit
 
 *\*\*\*Arguments are from the mutex table
 
+## Memory
+
+Memory will be mapped as such (assume ranges are inclusive):
+
+| Address Range  | Purpose              |
+| -------------- | -------------------- |
+| 000000..00000B | Instruction Vectors  |
+| 00000C..00030B | Interrupt Vectors    |
+| 00030C..00040B | Core 0 Stack         |
+| 00040C..00050B | Core 1 Stack         |
+| 00050C..00060B | Core 2 Stack         |
+| 00060C..00070B | Core 3 Stack         |
+| 00070C..000A0B | Display Palette      |
+| 000A0C..00FDCB | Display Framebuffer  |
+| 00FDCC..00FFFF | Memory-Mapped IO     |
+| 010000..FFFFFF | General RAM          |
+
+## Display
+
+240 by 260 pixels with 8-bit colors that index into a 256 color palette.
+
 ## Mutexes
 
 A mutex table is stored within the CPU allowing it to store up to 16 mutexes and 4 per core. Each mutex is stored as such:
