@@ -9,6 +9,7 @@
 int main(int argc, char *argv[]) {
   Computer *computer = calloc(1, sizeof(Computer));
   if (argc != 3) {
+    free(computer);
     printf("Usage\n%s test [test name]\n%s run [file]\n", argv[0], argv[0]);
     return EXIT_FAILURE;
   }
