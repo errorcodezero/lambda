@@ -6,8 +6,8 @@
 typedef union Color {
   struct {
     uint8_t red;
-    uint8_t blue;
     uint8_t green;
+    uint8_t blue;
   };
   uint8_t raw[3];
 } Color;
