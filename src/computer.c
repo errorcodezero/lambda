@@ -12,8 +12,8 @@ void computer_init(Computer *self) {
 
 void computer_start(Computer *self) {
   printf("%sCOMPUTER START%s\n", CONSOLE_BLUE, CONSOLE_RESET);
-  self->cores[0].instruction_pointer = memory_get_24(self, 0);
   console_print_core(0, self->cores[0].instruction_pointer);
+  self->cores[0].instruction_pointer = memory_get_24(self, 0);
   printf("INSTRUCTION VECTOR 0x%X\n", memory_get_24(self, 0));
   self->cores[0].awake = true;
   console_print_core(0, self->cores[0].instruction_pointer);
