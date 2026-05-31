@@ -5,7 +5,7 @@
 
 void test(Computer *computer) {
   uint32_t program_addr = 0x010000;
-  uint32_t memory_data_addr = 0x002000;
+  uint32_t memory_data_addr = 0x020000;
   uint32_t write_addr = program_addr;
 
   computer->memory[0] = (uint8_t)(program_addr & 0xFF);
@@ -37,10 +37,15 @@ void test(Computer *computer) {
   computer->memory[write_addr++] = 0x01;
   computer->memory[write_addr++] = 0x00;
 
-  computer->memory[write_addr++] = 0x39; // RLD R1, [bank:0x2000]
+  computer->memory[write_addr++] = 0x32; // LDI R14, 0x0002 (set bank=2)
+  computer->memory[write_addr++] = 0x0E;
+  computer->memory[write_addr++] = 0x02;
+  computer->memory[write_addr++] = 0x00;
+
+  computer->memory[write_addr++] = 0x39; // RLD R1, [bank:0x0000]
   computer->memory[write_addr++] = 0x01;
   computer->memory[write_addr++] = 0x00;
-  computer->memory[write_addr++] = 0x20;
+  computer->memory[write_addr++] = 0x00;
 
   computer->memory[write_addr++] = 0x10; // INC R1, 1
   computer->memory[write_addr++] = 0x11;
@@ -161,37 +166,37 @@ void test(Computer *computer) {
   computer->memory[write_addr++] = 0x23;
 
   computer->memory[write_addr++] =
-      0x3A; // RLM MODE 0, R0, offset 0x3100 (1 byte, no indirection)
+      0x3A; // RLM MODE 0, R0, offset 0x1400 (1 byte, no indirection)
   computer->memory[write_addr++] = 0x00;
   computer->memory[write_addr++] = 0x00;
-  computer->memory[write_addr++] = 0x31;
+  computer->memory[write_addr++] = 0x14;
 
   computer->memory[write_addr++] =
-      0x3A; // RLM MODE 1, R1, offset 0x3101 (2 bytes, no indirection)
+      0x3A; // RLM MODE 1, R1, offset 0x1401 (2 bytes, no indirection)
   computer->memory[write_addr++] = 0x11;
   computer->memory[write_addr++] = 0x01;
-  computer->memory[write_addr++] = 0x31;
+  computer->memory[write_addr++] = 0x14;
 
   computer->memory[write_addr++] =
-      0x3A; // RLM MODE 2, R0, offset 0x3104 (1 byte, with indirection)
+      0x3A; // RLM MODE 2, R0, offset 0x1404 (1 byte, with indirection)
   computer->memory[write_addr++] = 0x20;
   computer->memory[write_addr++] = 0x04;
-  computer->memory[write_addr++] = 0x31;
+  computer->memory[write_addr++] = 0x14;
 
   computer->memory[write_addr++] =
-      0x3A; // RLM MODE 3, R1, offset 0x3107 (2 bytes, with indirection)
+      0x3A; // RLM MODE 3, R1, offset 0x1407 (2 bytes, with indirection)
   computer->memory[write_addr++] = 0x31;
   computer->memory[write_addr++] = 0x07;
-  computer->memory[write_addr++] = 0x31;
+  computer->memory[write_addr++] = 0x14;
 
   computer->memory[write_addr++] =
-      0x2E; // MWR R0, R2 (stores R2 to mem[BANK:reg[R0]])
-  computer->memory[write_addr++] = 0x02;
+      0x2E; // MWR R4, R2 (stores R2 to mem[BANK:reg[R4]])
+  computer->memory[write_addr++] = 0x42;
   computer->memory[write_addr++] = 0x00;
 
   computer->memory[write_addr++] =
-      0x2F; // MIWR R3, R2 (stores R2 via indirect through mem[BANK:reg[R3]])
-  computer->memory[write_addr++] = 0x32;
+      0x2F; // MIWR R12, R2 (stores R2 via indirect through mem[BANK:reg[R12]])
+  computer->memory[write_addr++] = 0xC2;
   computer->memory[write_addr++] = 0x00;
 
   computer->memory[write_addr++] = 0x32; // LDI R14, 0xAABB
@@ -200,32 +205,32 @@ void test(Computer *computer) {
   computer->memory[write_addr++] = 0xAA;
 
   computer->memory[write_addr++] =
-      0x41; // ALM MODE 0, R14, 0x002100 (1 byte, no indirection)
+      0x41; // ALM MODE 0, R14, 0x021000 (1 byte, no indirection)
   computer->memory[write_addr++] = 0x0E;
   computer->memory[write_addr++] = 0x00;
-  computer->memory[write_addr++] = 0x21;
-  computer->memory[write_addr++] = 0x00;
+  computer->memory[write_addr++] = 0x10;
+  computer->memory[write_addr++] = 0x02;
 
   computer->memory[write_addr++] =
-      0x41; // ALM MODE 1, R14, 0x002101 (2 bytes, no indirection)
+      0x41; // ALM MODE 1, R14, 0x021001 (2 bytes, no indirection)
   computer->memory[write_addr++] = 0x1E;
   computer->memory[write_addr++] = 0x01;
-  computer->memory[write_addr++] = 0x21;
-  computer->memory[write_addr++] = 0x00;
+  computer->memory[write_addr++] = 0x10;
+  computer->memory[write_addr++] = 0x02;
 
   computer->memory[write_addr++] =
-      0x41; // ALM MODE 2, R14, 0x002200 (1 byte, with indirection)
+      0x41; // ALM MODE 2, R14, 0x021200 (1 byte, with indirection)
   computer->memory[write_addr++] = 0x2E;
   computer->memory[write_addr++] = 0x00;
-  computer->memory[write_addr++] = 0x22;
-  computer->memory[write_addr++] = 0x00;
+  computer->memory[write_addr++] = 0x12;
+  computer->memory[write_addr++] = 0x02;
 
   computer->memory[write_addr++] =
-      0x41; // ALM MODE 3, R14, 0x002203 (2 bytes, with indirection)
+      0x41; // ALM MODE 3, R14, 0x021203 (2 bytes, with indirection)
   computer->memory[write_addr++] = 0x3E;
   computer->memory[write_addr++] = 0x03;
-  computer->memory[write_addr++] = 0x22;
-  computer->memory[write_addr++] = 0x00;
+  computer->memory[write_addr++] = 0x12;
+  computer->memory[write_addr++] = 0x02;
 
   // AJMPIZD: condition FALSE (Z=0) -> fall through
   computer->memory[write_addr++] = 0x33; // AJMPIZD
@@ -244,30 +249,30 @@ void test(Computer *computer) {
   computer->memory[memory_data_addr] = 0xCD;
   computer->memory[memory_data_addr + 1] = 0xAB;
 
-  // Indirection pointer for ALM MODE 2 -> 0x003000
-  computer->memory[0x002200] = 0x00;
-  computer->memory[0x002201] = 0x30;
-  computer->memory[0x002202] = 0x00;
+  // Indirection pointer for ALM MODE 2 -> 0x021300
+  computer->memory[0x021200] = 0x00;
+  computer->memory[0x021201] = 0x13;
+  computer->memory[0x021202] = 0x02;
 
-  // Indirection pointer for ALM MODE 3 -> 0x003002
-  computer->memory[0x002203] = 0x02;
-  computer->memory[0x002204] = 0x30;
-  computer->memory[0x002205] = 0x00;
+  // Indirection pointer for ALM MODE 3 -> 0x021302
+  computer->memory[0x021203] = 0x02;
+  computer->memory[0x021204] = 0x13;
+  computer->memory[0x021205] = 0x02;
 
-  // Indirection pointer for RLM MODE 2 -> 0x003200
-  computer->memory[0x003104] = 0x00;
-  computer->memory[0x003105] = 0x32;
-  computer->memory[0x003106] = 0x00;
+  // Indirection pointer for RLM MODE 2 -> 0x021500
+  computer->memory[0x021404] = 0x00;
+  computer->memory[0x021405] = 0x15;
+  computer->memory[0x021406] = 0x02;
 
-  // Indirection pointer for RLM MODE 3 -> 0x003202
-  computer->memory[0x003107] = 0x02;
-  computer->memory[0x003108] = 0x32;
-  computer->memory[0x003109] = 0x00;
+  // Indirection pointer for RLM MODE 3 -> 0x021502
+  computer->memory[0x021407] = 0x02;
+  computer->memory[0x021408] = 0x15;
+  computer->memory[0x021409] = 0x02;
 
-  // Indirection pointer for MIWR (R3=0x03FC) -> 0x003300
-  computer->memory[0x0003FC] = 0x00;
-  computer->memory[0x0003FD] = 0x33;
-  computer->memory[0x0003FE] = 0x00;
+  // Indirection pointer for MIWR (R12=0x0003) -> 0x020700
+  computer->memory[0x020003] = 0x00;
+  computer->memory[0x020004] = 0x07;
+  computer->memory[0x020005] = 0x02;
 
   computer_start(computer);
   while (!computer->halted) {
@@ -292,32 +297,32 @@ void test(Computer *computer) {
       computer->cores[0].registers[12] != 0x0003 ||
       computer->cores[0].registers[13] != 0x0001 ||
       computer->cores[0].registers[14] != 0x00BB ||
-      computer->memory[0x002100] != 0xBB ||
-      computer->memory[0x002101] != 0xBB ||
-      computer->memory[0x002102] != 0x00 ||
-      computer->memory[0x003000] != 0xBB ||
-      computer->memory[0x003002] != 0xBB ||
-      computer->memory[0x003003] != 0x00 ||
-      computer->memory[0x003100] != 0x34 ||
-      computer->memory[0x003101] != 0xCD ||
-      computer->memory[0x003102] != 0xAB ||
-      computer->memory[0x003200] != 0x34 ||
-      computer->memory[0x003202] != 0xCD ||
-      computer->memory[0x003203] != 0xAB ||
-      computer->memory[0x001234] != 0xFF ||
-      computer->memory[0x001235] != 0x00 ||
-      computer->memory[0x003300] != 0xFF ||
-      computer->memory[0x003301] != 0x00) {
+      computer->memory[0x021000] != 0xBB ||
+      computer->memory[0x021001] != 0xBB ||
+      computer->memory[0x021002] != 0x00 ||
+      computer->memory[0x021300] != 0xBB ||
+      computer->memory[0x021302] != 0xBB ||
+      computer->memory[0x021303] != 0x00 ||
+      computer->memory[0x021400] != 0x34 ||
+      computer->memory[0x021401] != 0xCD ||
+      computer->memory[0x021402] != 0xAB ||
+      computer->memory[0x021500] != 0x34 ||
+      computer->memory[0x021502] != 0xCD ||
+      computer->memory[0x021503] != 0xAB ||
+      computer->memory[0x02FF00] != 0xFF ||
+      computer->memory[0x02FF01] != 0x00 ||
+      computer->memory[0x020700] != 0xFF ||
+      computer->memory[0x020701] != 0x00) {
     fprintf(
         stderr,
         "%sTest failed: R0=0x%X R1=0x%X R2=0x%X R3=0x%X R4=0x%X R5=0x%X "
         "R6=0x%X R7=0x%X R8=0x%X R9=0x%X R10=0x%X R11=0x%X R12=0x%X R13=0x%X "
-        "R14=0x%X MEM[0x2100]=0x%X MEM[0x2101]=0x%X MEM[0x2102]=0x%X "
-        "MEM[0x3000]=0x%X MEM[0x3002]=0x%X MEM[0x3003]=0x%X "
-        "MEM[0x3100]=0x%X MEM[0x3101]=0x%X MEM[0x3102]=0x%X "
-        "MEM[0x3200]=0x%X MEM[0x3202]=0x%X MEM[0x3203]=0x%X "
-        "MEM[0x1234]=0x%X MEM[0x1235]=0x%X "
-        "MEM[0x3300]=0x%X MEM[0x3301]=0x%X\n%s",
+        "R14=0x%X MEM[0x21000]=0x%X MEM[0x21001]=0x%X MEM[0x21002]=0x%X "
+        "MEM[0x21300]=0x%X MEM[0x21302]=0x%X MEM[0x21303]=0x%X "
+        "MEM[0x21400]=0x%X MEM[0x21401]=0x%X MEM[0x21402]=0x%X "
+        "MEM[0x21500]=0x%X MEM[0x21502]=0x%X MEM[0x21503]=0x%X "
+        "MEM[0x2FF00]=0x%X MEM[0x2FF01]=0x%X "
+        "MEM[0x20700]=0x%X MEM[0x20701]=0x%X\n%s",
         CONSOLE_RED, computer->cores[0].registers[0],
         computer->cores[0].registers[1], computer->cores[0].registers[2],
         computer->cores[0].registers[3], computer->cores[0].registers[4],
@@ -326,14 +331,14 @@ void test(Computer *computer) {
         computer->cores[0].registers[9], computer->cores[0].registers[10],
         computer->cores[0].registers[11], computer->cores[0].registers[12],
         computer->cores[0].registers[13], computer->cores[0].registers[14],
-        computer->memory[0x002100], computer->memory[0x002101],
-        computer->memory[0x002102], computer->memory[0x003000],
-        computer->memory[0x003002], computer->memory[0x003003],
-        computer->memory[0x003100], computer->memory[0x003101],
-        computer->memory[0x003102], computer->memory[0x003200],
-        computer->memory[0x003202], computer->memory[0x003203],
-        computer->memory[0x001234], computer->memory[0x001235],
-        computer->memory[0x003300], computer->memory[0x003301], CONSOLE_RESET);
+        computer->memory[0x021000], computer->memory[0x021001],
+        computer->memory[0x021002], computer->memory[0x021300],
+        computer->memory[0x021302], computer->memory[0x021303],
+        computer->memory[0x021400], computer->memory[0x021401],
+        computer->memory[0x021402], computer->memory[0x021500],
+        computer->memory[0x021502], computer->memory[0x021503],
+        computer->memory[0x02FF00], computer->memory[0x02FF01],
+        computer->memory[0x020700], computer->memory[0x020701], CONSOLE_RESET);
   }
   printf("%sTests passed%s\n", CONSOLE_GREEN, CONSOLE_RESET);
 }
