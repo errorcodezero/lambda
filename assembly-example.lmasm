@@ -10,11 +10,11 @@
 #text
 
 // start function
-// in the second set of square brackets, the first number denotes a core and the second number denotes where the function pointer belongs
+// in the second set of brackets, the first number denotes a core and the second number denotes where the function pointer belongs
 // the idea behind this is that you can easily declare interrupt handlers by declaring what core its for and how it works(where empty is just the start function)
 // the third set of square brackets is for arguments which will be accessible as constants
 
-[start] [0] ()
+[start] {0} ()
 @LDI $0 @variable
 
 // dollar sign denotes a register.
