@@ -1,4 +1,5 @@
 #include "computer.h"
+#include "compiler.h"
 #include "console.h"
 #include "core.h"
 #include "test.h"
@@ -27,9 +28,50 @@ int main(int argc, char *argv[]) {
     } else if (strcmp(argv[2], "main")) {
       test(computer);
     }
+  } else if (strcmp(argv[1], "compile") == 0) {
+    FILE *file = fopen(argv[2], "rb");
+    if (!file) {
+      fprintf(stderr, "Could not open file: %s\n", argv[2]);
+      free(computer);
+      return EXIT_FAILURE;
+    }
+    fseek(file, 0, SEEK_END);
+    size_t size = ftell(file);
+    rewind(file);
+    char *source = malloc(size + 1);
+    fread(source, 1, size, file);
+    source[size] = '\0';
+    fclose(file);
+
+    Scanner scanner = {
+      .tokens = malloc(sizeof(Token) * 64),
+      .tokens_size = 0,
+      .tokens_maximum_size = 64,
+      .source = source,
+      .source_index = 0,
+      .line = 1,
+    };
+
+    scan_scanner(&scanner);
+    print_tokens(&scanner);
+
+    for (size_t i = 0; i < scanner.tokens_size; i++) {
+      TokenData *d = scanner.tokens[i].data;
+      if (d) {
+        TokenType t = scanner.tokens[i].type;
+        if (t == TT_NUM_VARIABLE || t == TT_STR_VARIABLE ||
+            t == TT_FUNCTION_START || t == TT_FUNCTION_END ||
+            t == TT_ARGUMENT || t == TT_STR_VALUE) {
+          free(d->string);
+        }
+        free(d);
+      }
+    }
+    free(scanner.tokens);
+    free(source);
   } else if (strcmp(argv[1], "run") == 0) {
     if (argc != 3) {
-      printf("Usage\n%s test [test name]\n%s run [file]\n", argv[0], argv[0]);
+printf("Usage\n%s test [test name]\n%s run [file]\n%s compile [file]\n", argv[0], argv[0], argv[0]);
       return EXIT_FAILURE;
     }
     FILE *file = fopen(argv[2], "rb");

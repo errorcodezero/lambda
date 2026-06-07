@@ -77,5 +77,6 @@ typedef enum Instructions {
 
 typedef void (*InstructionHandler)(Computer *computer, uint8_t core_id);
 void setup_instructions(Computer *computer);
+Instructions instruction_from_string(const char *name);
 
 #endif // INCLUDE_SRC_INSTRUCTIONS_H_

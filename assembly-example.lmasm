@@ -1,32 +1,32 @@
 #data
 
-// comment
+/ comment
 @variable = 0xFFFF
 'string = "string"
 
-// string variables are denoted with the single quote notation above while number variables are denoted with the @ sign notation
-// instruction shorthands(such as LDI) are actually just predefined constants because i'm really nice to users
+/ string variables are denoted with the single quote notation above while number variables are denoted with the @ sign notation
+/ instruction shorthands(such as LDI) are actually just predefined constants because i'm really nice to users
 
 #text
 
-// start function
-// in the second set of brackets, the first number denotes a core and the second number denotes where the function pointer belongs
-// the idea behind this is that you can easily declare interrupt handlers by declaring what core its for and how it works(where empty is just the start function)
-// the third set of square brackets is for arguments which will be accessible as constants
+/ start function
+/ in the second set of brackets, the first number denotes a core and the second number denotes where the function pointer belongs
+/ the idea behind this is that you can easily declare interrupt handlers by declaring what core its for and how it works(where empty is just the start function)
+/ the third set of square brackets is for arguments which will be accessible as constants
 
 [start] {0} ()
 @LDI $0 @variable
 
-// dollar sign denotes a register.
-// constants are either written as numbers or strings
+/ dollar sign denotes a register.
+/ constants are either written as numbers or strings
 
 @HLT
 [/start]
 
-// the line above signals the end of the function
+/ the line above signals the end of the function
 
-// The really cool part about this is that the asterisk denotes that the same function be used for all cores.
-// An interrupt in your system that uses a common handler for all cores can easily be set up as such! 
+/ The really cool part about this is that the asterisk denotes that the same function be used for all cores.
+/ An interrupt in your system that uses a common handler for all cores can easily be set up as such! 
 [mutex_permission_failure] [* 2] ()
 @HLT
 [/mutex_permission_failure]
