@@ -6,6 +6,7 @@
 
 typedef enum TokenType {
   TT_NUM_VARIABLE,
+  TT_NUM_VARIABLE_ADDR,
   TT_STR_VARIABLE,
   TT_EQUALS,
   TT_REGISTER,
@@ -26,11 +27,9 @@ typedef struct {
   bool has_position;
 } PositioningData;
 
-typedef union TokenData {
-  char *string;
-  uint8_t register_id;
-  uint16_t number;
-  PositioningData positioning;
+typedef struct TokenData {
+  uint8_t *data;
+  size_t size;
 } TokenData;
 
 typedef struct Token {
@@ -55,5 +54,16 @@ uint8_t char_to_hex(char character);
 void error_scanner(Scanner *scanner, char *message);
 void function_scanner(Scanner *scanner);
 void print_tokens(Scanner *scanner);
+
+typedef struct Symbol {
+  char *name;
+  uint8_t *data;
+  uint32_t size;
+} Symbol;
+
+typedef struct Compiler {
+  Token *tokens;
+  size_t tokens_size;
+} Compiler;
 
 #endif // INCLUDE_SRC_COMPILER_COMPILER_H_

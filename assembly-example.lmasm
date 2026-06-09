@@ -17,6 +17,10 @@
 [start] {0} ()
 @LDI $0 @variable
 
+/ @& gives the address of a variable instead of its inline value
+/ useful for loading from data memory with RLD/RLM
+@RLD $1 @&variable
+
 / dollar sign denotes a register.
 / constants are either written as numbers or strings
 

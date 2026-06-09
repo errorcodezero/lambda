@@ -9,6 +9,39 @@ static bool is_name_char(char c) {
   return isalnum((unsigned char)c) || c == '_';
 }
 
+static TokenData *token_data_string(const char *str) {
+  TokenData *td = calloc(1, sizeof(TokenData));
+  td->size = strlen(str) + 1;
+  td->data = malloc(td->size);
+  memcpy(td->data, str, td->size);
+  return td;
+}
+
+static TokenData *token_data_uint8(uint8_t val) {
+  TokenData *td = calloc(1, sizeof(TokenData));
+  td->size = 1;
+  td->data = malloc(1);
+  td->data[0] = val;
+  return td;
+}
+
+static TokenData *token_data_uint16(uint16_t val) {
+  TokenData *td = calloc(1, sizeof(TokenData));
+  td->size = 2;
+  td->data = malloc(2);
+  td->data[0] = val & 0xFF;
+  td->data[1] = (val >> 8) & 0xFF;
+  return td;
+}
+
+static TokenData *token_data_positioning(PositioningData pos) {
+  TokenData *td = calloc(1, sizeof(TokenData));
+  td->size = sizeof(PositioningData);
+  td->data = malloc(td->size);
+  memcpy(td->data, &pos, td->size);
+  return td;
+}
+
 size_t push_token_scanner(Scanner *scanner, TokenType token_type,
                   TokenData *token_data) {
   if (scanner->tokens_size >= scanner->tokens_maximum_size) {
@@ -56,12 +89,10 @@ void scan_scanner(Scanner *scanner) {
     }
     case '$': {
       uint8_t register_id = char_to_hex(advance_scanner(scanner));
-      TokenData *data = calloc(1, sizeof(TokenData));
       if (register_id >= 0xF) {
         error_scanner(scanner, "Invalid register");
       } else {
-        data->register_id = register_id;
-        push_token_scanner(scanner, TT_REGISTER, data);
+        push_token_scanner(scanner, TT_REGISTER, token_data_uint8(register_id));
       }
       break;
     }
@@ -69,14 +100,16 @@ void scan_scanner(Scanner *scanner) {
       char var_name[256];
       size_t i = 0;
       character = advance_scanner(scanner);
+      bool is_addr = (character == '&');
+      if (is_addr) {
+        character = advance_scanner(scanner);
+      }
       while (is_name_char(character) && i < 255) {
         var_name[i++] = character;
         character = advance_scanner(scanner);
       }
       var_name[i] = '\0';
-      TokenData *data = calloc(1, sizeof(TokenData));
-      data->string = strdup(var_name);
-      push_token_scanner(scanner, TT_NUM_VARIABLE, data);
+      push_token_scanner(scanner, is_addr ? TT_NUM_VARIABLE_ADDR : TT_NUM_VARIABLE, token_data_string(var_name));
       continue;
     }
     case '\'': {
@@ -88,9 +121,7 @@ void scan_scanner(Scanner *scanner) {
         character = advance_scanner(scanner);
       }
       var_name[i] = '\0';
-      TokenData *data = calloc(1, sizeof(TokenData));
-      data->string = strdup(var_name);
-      push_token_scanner(scanner, TT_STR_VARIABLE, data);
+      push_token_scanner(scanner, TT_STR_VARIABLE, token_data_string(var_name));
       continue;
     }
     case '=':
@@ -109,8 +140,7 @@ void scan_scanner(Scanner *scanner) {
         error_scanner(scanner, "Unterminated string literal");
         break;
       }
-      TokenData *data = calloc(1, sizeof(TokenData));
-      data->string = strdup(str_val);
+      TokenData *data = token_data_string(str_val);
       push_token_scanner(scanner, TT_STR_VALUE, data);
       break;
     }
@@ -123,9 +153,7 @@ void scan_scanner(Scanner *scanner) {
           value = (value << 4) | char_to_hex(character);
           character = advance_scanner(scanner);
         }
-        TokenData *data = calloc(1, sizeof(TokenData));
-        data->number = value;
-        push_token_scanner(scanner, TT_HEX_VALUE, data);
+        push_token_scanner(scanner, TT_HEX_VALUE, token_data_uint16(value));
         continue;
       }
       continue;
@@ -142,8 +170,12 @@ void scan_scanner(Scanner *scanner) {
     case ')':
     case ',':
       break;
-    default:
+    default: {
+      char msg[64];
+      snprintf(msg, sizeof(msg), "Unrecognized character: '%c' (0x%02X)", character, (unsigned char)character);
+      error_scanner(scanner, msg);
       break;
+    }
     }
     character = advance_scanner(scanner);
   }
@@ -185,8 +217,7 @@ void function_scanner(Scanner *scanner) {
     return;
   }
 
-  TokenData *data = calloc(1, sizeof(TokenData));
-  data->string = strdup(name);
+  TokenData *data = token_data_string(name);
   push_token_scanner(scanner, is_end ? TT_FUNCTION_END : TT_FUNCTION_START, data);
 
   if (is_end) return;
@@ -229,8 +260,7 @@ void function_scanner(Scanner *scanner) {
     }
     advance_scanner(scanner);
 
-    TokenData *pos_data = calloc(1, sizeof(TokenData));
-    pos_data->positioning = pos;
+    TokenData *pos_data = token_data_positioning(pos);
     push_token_scanner(scanner, TT_POSITIONING, pos_data);
   }
 
@@ -272,8 +302,7 @@ void function_scanner(Scanner *scanner) {
     }
     advance_scanner(scanner);
 
-    TokenData *pos_data = calloc(1, sizeof(TokenData));
-    pos_data->positioning = pos;
+    TokenData *pos_data = token_data_positioning(pos);
     push_token_scanner(scanner, TT_POSITIONING, pos_data);
   }
 
@@ -303,9 +332,7 @@ void function_scanner(Scanner *scanner) {
       }
       arg_name[j] = '\0';
 
-      TokenData *arg_data = calloc(1, sizeof(TokenData));
-      arg_data->string = strdup(arg_name);
-      push_token_scanner(scanner, TT_ARGUMENT, arg_data);
+      push_token_scanner(scanner, TT_ARGUMENT, token_data_string(arg_name));
     }
 
     if (character != ')') {
@@ -336,6 +363,7 @@ void error_scanner(Scanner *scanner, char *message) {
 static const char *token_type_name(TokenType type) {
   switch (type) {
   case TT_NUM_VARIABLE:   return "TT_NUM_VARIABLE";
+  case TT_NUM_VARIABLE_ADDR: return "TT_NUM_VARIABLE_ADDR";
   case TT_STR_VARIABLE:   return "TT_STR_VARIABLE";
   case TT_EQUALS:         return "TT_EQUALS";
   case TT_REGISTER:       return "TT_REGISTER";
@@ -359,21 +387,22 @@ void print_tokens(Scanner *scanner) {
     if (token->data) {
       switch (token->type) {
       case TT_NUM_VARIABLE:
+      case TT_NUM_VARIABLE_ADDR:
       case TT_STR_VARIABLE:
       case TT_FUNCTION_START:
       case TT_FUNCTION_END:
       case TT_ARGUMENT:
       case TT_STR_VALUE:
-        printf(" \"%s\"", token->data->string);
+        printf(" \"%s\"", (char *)token->data->data);
         break;
       case TT_REGISTER:
-        printf(" $%X", token->data->register_id);
+        printf(" $%X", token->data->data[0]);
         break;
       case TT_HEX_VALUE:
-        printf(" 0x%04X", token->data->number);
+        printf(" 0x%04X", (uint16_t)(token->data->data[0] | (token->data->data[1] << 8)));
         break;
       case TT_POSITIONING: {
-        PositioningData *p = &token->data->positioning;
+        PositioningData *p = (PositioningData *)token->data->data;
         printf(" {");
         if (p->all_cores) printf("*");
         else printf("%X", p->core);

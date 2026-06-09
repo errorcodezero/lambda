@@ -58,12 +58,7 @@ int main(int argc, char *argv[]) {
     for (size_t i = 0; i < scanner.tokens_size; i++) {
       TokenData *d = scanner.tokens[i].data;
       if (d) {
-        TokenType t = scanner.tokens[i].type;
-        if (t == TT_NUM_VARIABLE || t == TT_STR_VARIABLE ||
-            t == TT_FUNCTION_START || t == TT_FUNCTION_END ||
-            t == TT_ARGUMENT || t == TT_STR_VALUE) {
-          free(d->string);
-        }
+        free(d->data);
         free(d);
       }
     }
