@@ -12,33 +12,33 @@ static bool is_name_char(char c) {
 static TokenData *token_data_string(const char *str) {
   TokenData *td = calloc(1, sizeof(TokenData));
   td->size = strlen(str) + 1;
-  td->data = malloc(td->size);
-  memcpy(td->data, str, td->size);
+  td->bytes = malloc(td->size);
+  memcpy(td->bytes, str, td->size);
   return td;
 }
 
 static TokenData *token_data_uint8(uint8_t val) {
   TokenData *td = calloc(1, sizeof(TokenData));
   td->size = 1;
-  td->data = malloc(1);
-  td->data[0] = val;
+  td->bytes = malloc(1);
+  td->bytes[0] = val;
   return td;
 }
 
 static TokenData *token_data_uint16(uint16_t val) {
   TokenData *td = calloc(1, sizeof(TokenData));
   td->size = 2;
-  td->data = malloc(2);
-  td->data[0] = val & 0xFF;
-  td->data[1] = (val >> 8) & 0xFF;
+  td->bytes = malloc(2);
+  td->bytes[0] = val & 0xFF;
+  td->bytes[1] = (val >> 8) & 0xFF;
   return td;
 }
 
 static TokenData *token_data_positioning(PositioningData pos) {
   TokenData *td = calloc(1, sizeof(TokenData));
   td->size = sizeof(PositioningData);
-  td->data = malloc(td->size);
-  memcpy(td->data, &pos, td->size);
+  td->bytes = malloc(td->size);
+  memcpy(td->bytes, &pos, td->size);
   return td;
 }
 
@@ -139,8 +139,6 @@ void scan_scanner(Scanner *scanner) {
       continue;
     }
     case '=':
-      push_token_scanner(scanner, TT_EQUALS, NULL);
-      break;
     case '"': {
       char str_val[1024];
       size_t i = 0;
@@ -426,17 +424,17 @@ void print_tokens(Scanner *scanner) {
       case TT_FUNCTION_END:
       case TT_ARGUMENT:
       case TT_STR_VALUE:
-        printf(" \"%s\"", (char *)token->data->data);
+        printf(" \"%s\"", token->data->string);
         break;
       case TT_REGISTER:
-        printf(" $%X", token->data->data[0]);
+        printf(" $%X", token->data->bytes[0]);
         break;
       case TT_HEX_VALUE:
         printf(" 0x%04X",
-               (uint16_t)(token->data->data[0] | (token->data->data[1] << 8)));
+               (uint16_t)(token->data->bytes[0] | (token->data->bytes[1] << 8)));
         break;
       case TT_POSITIONING: {
-        PositioningData *p = (PositioningData *)token->data->data;
+        PositioningData *p = (PositioningData *)token->data->bytes;
         printf(" {");
         if (p->all_cores)
           printf("*");
@@ -464,34 +462,25 @@ Compiler *init_compiler(Scanner *scanner) {
   return compiler;
 }
 
-size_t push_symbol_scanner(Compiler *compiler, char *name, uint8_t *data,
-                           uint32_t size) {
-  if (compiler->symbols_size >= compiler->symbols_maximum_size) {
-    compiler->symbols_maximum_size *= 2;
-    compiler->symbols =
-        realloc(compiler->symbols, compiler->symbols_maximum_size);
-  }
-
-  Symbol symbol = {
-      .data = data,
-      .name = name,
-      .size = size,
-  };
-
-  compiler->symbols[compiler->symbols_size++] = symbol;
-  return compiler->symbols_maximum_size;
-}
-
 Token *advance_compiler(Compiler *compiler) {
   if (compiler->tokens_index >= compiler->tokens_size) {
-    // not actually part of the tokens array but returned just to signal to the
-    // compiler that the section is over.
     return NULL;
   }
   return &compiler->tokens[compiler->tokens_index++];
 }
 
 void reset_compiler(Compiler *compiler) { compiler->tokens_index = 0; }
+
+size_t push_symbol_compiler(Compiler *compiler, Symbol symbol) {
+  if (compiler->symbols_size >= compiler->symbols_maximum_size) {
+    compiler->symbols_maximum_size *= 2;
+    compiler->symbols =
+        realloc(compiler->symbols, compiler->symbols_maximum_size);
+  }
+
+  compiler->symbols[compiler->symbols_size++] = symbol;
+  return compiler->symbols_size;
+}
 
 void compile_compiler(Compiler *compiler) {
   // pass 1: data section
@@ -502,7 +491,31 @@ void compile_compiler(Compiler *compiler) {
     token = advance_compiler(compiler);
 
   // parse the text section into the symbol table
+  // TODO: add actual error handling
   while (token->type != TT_TEXT_SECTION || token->type != TT_EOF) {
     token = advance_compiler(compiler);
+    if (token->type != TT_NUM_VARIABLE || token->type != TT_STR_VARIABLE) {
+      return;
+    } else if (token->type == TT_STR_VARIABLE) {
+      Symbol symbol = {
+          .name = token->data->string,
+      };
+      token = advance_compiler(compiler);
+      if (token->type == TT_STR_VALUE)
+        return;
+      symbol.data = token->data->bytes;
+      symbol.size = token->data->size;
+      push_symbol_compiler(compiler, symbol);
+    } else if (token->type == TT_NUM_VARIABLE) {
+      Symbol symbol = {
+          .name = token->data->string,
+      };
+      token = advance_compiler(compiler);
+      if (token->type == TT_HEX_VALUE)
+        return;
+      symbol.data = token->data->bytes;
+      symbol.size = token->data->size;
+      push_symbol_compiler(compiler, symbol);
+    }
   }
 }

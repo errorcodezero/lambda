@@ -1,8 +1,8 @@
 #data
 
 / comment
-@variable = 0xFFFF
-'string = "string"
+@variable 0xFFFF
+'string "string"
 
 / string variables are denoted with the single quote notation above while number variables are denoted with the @ sign notation
 / instruction shorthands(such as LDI) are actually just predefined constants because i'm really nice to users

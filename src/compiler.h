@@ -29,7 +29,10 @@ typedef struct {
 } PositioningData;
 
 typedef struct TokenData {
-  uint8_t *data;
+  union {
+    uint8_t *bytes;
+    char *string;
+  };
   size_t size;
 } TokenData;
 
@@ -73,6 +76,7 @@ typedef struct Compiler {
 } Compiler;
 
 Compiler *init_compiler(Scanner *scanner);
+size_t push_symbol_compiler(Compiler *compiler, Symbol symbol);
 Token *advance_compiler(Compiler *compiler);
 void reset_compiler(Compiler *compiler);
 void compile_compiler(Compiler *compiler);

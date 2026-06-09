@@ -48,7 +48,7 @@ int main(int argc, char *argv[]) {
     for (size_t i = 0; i < scanner->tokens_size; i++) {
       TokenData *d = scanner->tokens[i].data;
       if (d) {
-        free(d->data);
+        free(d->bytes);
         free(d);
       }
     }
