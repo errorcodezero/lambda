@@ -1,5 +1,5 @@
-#include "computer.h"
 #include "compiler.h"
+#include "computer.h"
 #include "test.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -43,20 +43,21 @@ int main(int argc, char *argv[]) {
 
     Scanner *scanner = init_scanner(source);
     scan_scanner(scanner);
-    print_tokens(scanner);
-
-    for (size_t i = 0; i < scanner->tokens_size; i++) {
-      TokenData *d = scanner->tokens[i].data;
-      if (d) {
-        free(d->bytes);
-        free(d);
-      }
+    if (getenv("DEBUG") != NULL) {
+      print_tokens_scanner(scanner);
     }
-    free(scanner->tokens);
-    free(source);
+    Compiler *compiler = init_compiler(scanner);
+    compile_compiler(compiler);
+    if (getenv("DEBUG") != NULL) {
+      print_symbols_compiler(compiler);
+    }
+
+    free_compiler(compiler);
+    free_scanner(scanner);
   } else if (strcmp(argv[1], "run") == 0) {
     if (argc != 3) {
-printf("Usage\n%s test [test name]\n%s run [file]\n%s compile [file]\n", argv[0], argv[0], argv[0]);
+      printf("Usage\n%s test [test name]\n%s run [file]\n%s compile [file]\n",
+             argv[0], argv[0], argv[0]);
       return EXIT_FAILURE;
     }
     FILE *file = fopen(argv[2], "rb");

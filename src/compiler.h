@@ -58,7 +58,7 @@ size_t push_token_scanner(Scanner *scanner, TokenType token_type,
 uint8_t char_to_hex(char character);
 void error_scanner(Scanner *scanner, char *message);
 void function_scanner(Scanner *scanner);
-void print_tokens(Scanner *scanner);
+void print_tokens_scanner(Scanner *scanner);
 
 typedef struct Symbol {
   char *name;
@@ -80,5 +80,8 @@ size_t push_symbol_compiler(Compiler *compiler, Symbol symbol);
 Token *advance_compiler(Compiler *compiler);
 void reset_compiler(Compiler *compiler);
 void compile_compiler(Compiler *compiler);
+void print_symbols_compiler(Compiler *compiler);
+void free_scanner(Scanner *scanner);
+void free_compiler(Compiler *compiler);
 
 #endif // INCLUDE_SRC_COMPILER_COMPILER_H_

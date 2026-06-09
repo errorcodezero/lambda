@@ -410,7 +410,7 @@ static const char *token_type_name(TokenType type) {
   return "UNKNOWN";
 }
 
-void print_tokens(Scanner *scanner) {
+void print_tokens_scanner(Scanner *scanner) {
   for (size_t i = 0; i < scanner->tokens_size; i++) {
     Token *token = &scanner->tokens[i];
     printf("[%zu] %s", i, token_type_name(token->type));
@@ -430,8 +430,8 @@ void print_tokens(Scanner *scanner) {
         printf(" $%X", token->data->bytes[0]);
         break;
       case TT_HEX_VALUE:
-        printf(" 0x%04X",
-               (uint16_t)(token->data->bytes[0] | (token->data->bytes[1] << 8)));
+        printf(" 0x%04X", (uint16_t)(token->data->bytes[0] |
+                                     (token->data->bytes[1] << 8)));
         break;
       case TT_POSITIONING: {
         PositioningData *p = (PositioningData *)token->data->bytes;
@@ -458,6 +458,8 @@ Compiler *init_compiler(Scanner *scanner) {
 
   compiler->tokens = scanner->tokens;
   compiler->tokens_size = scanner->tokens_size;
+  compiler->symbols = calloc(64, sizeof(Symbol));
+  compiler->symbols_maximum_size = 64;
 
   return compiler;
 }
@@ -471,6 +473,19 @@ Token *advance_compiler(Compiler *compiler) {
 
 void reset_compiler(Compiler *compiler) { compiler->tokens_index = 0; }
 
+void print_symbols_compiler(Compiler *compiler) {
+  for (size_t i = 0; i < compiler->symbols_size; i++) {
+    Symbol *s = &compiler->symbols[i];
+    printf("[%zu] \"%s\" size=%u", i, s->name, s->size);
+    if (s->data) {
+      printf(" data=");
+      for (uint32_t j = 0; j < s->size; j++)
+        printf("%02X", s->data[j]);
+    }
+    printf("\n");
+  }
+}
+
 size_t push_symbol_compiler(Compiler *compiler, Symbol symbol) {
   if (compiler->symbols_size >= compiler->symbols_maximum_size) {
     compiler->symbols_maximum_size *= 2;
@@ -483,26 +498,22 @@ size_t push_symbol_compiler(Compiler *compiler, Symbol symbol) {
 }
 
 void compile_compiler(Compiler *compiler) {
-  // pass 1: data section
   Token *token = advance_compiler(compiler);
 
-  // move into the data section
-  while (token->type != TT_DATA_SECTION || token->type != TT_EOF)
+  while (token != NULL && token->type != TT_DATA_SECTION)
     token = advance_compiler(compiler);
 
-  // parse the text section into the symbol table
-  // TODO: add actual error handling
-  while (token->type != TT_TEXT_SECTION || token->type != TT_EOF) {
+  while (token != NULL && token->type != TT_TEXT_SECTION) {
     token = advance_compiler(compiler);
-    if (token->type != TT_NUM_VARIABLE || token->type != TT_STR_VARIABLE) {
-      return;
-    } else if (token->type == TT_STR_VARIABLE) {
+    if (token == NULL)
+      break;
+    if (token->type == TT_STR_VARIABLE) {
       Symbol symbol = {
           .name = token->data->string,
       };
       token = advance_compiler(compiler);
-      if (token->type == TT_STR_VALUE)
-        return;
+      if (token == NULL || token->type != TT_STR_VALUE)
+        break;
       symbol.data = token->data->bytes;
       symbol.size = token->data->size;
       push_symbol_compiler(compiler, symbol);
@@ -511,11 +522,29 @@ void compile_compiler(Compiler *compiler) {
           .name = token->data->string,
       };
       token = advance_compiler(compiler);
-      if (token->type == TT_HEX_VALUE)
-        return;
+      if (token == NULL || token->type != TT_HEX_VALUE)
+        break;
       symbol.data = token->data->bytes;
       symbol.size = token->data->size;
       push_symbol_compiler(compiler, symbol);
     }
   }
+}
+
+void free_scanner(Scanner *scanner) {
+  for (size_t i = 0; i < scanner->tokens_size; i++) {
+    TokenData *data = scanner->tokens[i].data;
+    if (data) {
+      free(data->bytes);
+      free(data);
+    }
+  }
+  free(scanner->tokens);
+  free(scanner->source);
+  free(scanner);
+}
+
+void free_compiler(Compiler *compiler) {
+  free(compiler->symbols);
+  free(compiler);
 }
