@@ -18,6 +18,7 @@ typedef enum TokenType {
   TT_ARGUMENT,
   TT_HEX_VALUE,
   TT_STR_VALUE,
+  TT_EOF,
 } TokenType;
 
 typedef struct {
@@ -46,6 +47,7 @@ typedef struct Scanner {
   size_t line;
 } Scanner;
 
+Scanner *init_scanner(char *source);
 void scan_scanner(Scanner *scanner);
 char advance_scanner(Scanner *scanner);
 size_t push_token_scanner(Scanner *scanner, TokenType token_type,
@@ -64,6 +66,15 @@ typedef struct Symbol {
 typedef struct Compiler {
   Token *tokens;
   size_t tokens_size;
+  size_t tokens_index;
+  Symbol *symbols;
+  size_t symbols_size;
+  size_t symbols_maximum_size;
 } Compiler;
+
+Compiler *init_compiler(Scanner *scanner);
+Token *advance_compiler(Compiler *compiler);
+void reset_compiler(Compiler *compiler);
+void compile_compiler(Compiler *compiler);
 
 #endif // INCLUDE_SRC_COMPILER_COMPILER_H_

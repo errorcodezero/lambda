@@ -1,7 +1,5 @@
 #include "computer.h"
 #include "compiler.h"
-#include "console.h"
-#include "core.h"
 #include "test.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -43,26 +41,18 @@ int main(int argc, char *argv[]) {
     source[size] = '\0';
     fclose(file);
 
-    Scanner scanner = {
-      .tokens = malloc(sizeof(Token) * 64),
-      .tokens_size = 0,
-      .tokens_maximum_size = 64,
-      .source = source,
-      .source_index = 0,
-      .line = 1,
-    };
+    Scanner *scanner = init_scanner(source);
+    scan_scanner(scanner);
+    print_tokens(scanner);
 
-    scan_scanner(&scanner);
-    print_tokens(&scanner);
-
-    for (size_t i = 0; i < scanner.tokens_size; i++) {
-      TokenData *d = scanner.tokens[i].data;
+    for (size_t i = 0; i < scanner->tokens_size; i++) {
+      TokenData *d = scanner->tokens[i].data;
       if (d) {
         free(d->data);
         free(d);
       }
     }
-    free(scanner.tokens);
+    free(scanner->tokens);
     free(source);
   } else if (strcmp(argv[1], "run") == 0) {
     if (argc != 3) {

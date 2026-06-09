@@ -1,9 +1,9 @@
 #include "compiler.h"
+#include "console.h"
+#include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <ctype.h>
-#include "console.h"
 
 static bool is_name_char(char c) {
   return isalnum((unsigned char)c) || c == '_';
@@ -43,7 +43,7 @@ static TokenData *token_data_positioning(PositioningData pos) {
 }
 
 size_t push_token_scanner(Scanner *scanner, TokenType token_type,
-                  TokenData *token_data) {
+                          TokenData *token_data) {
   if (scanner->tokens_size >= scanner->tokens_maximum_size) {
     scanner->tokens_maximum_size *= 2;
     scanner->tokens = realloc(scanner->tokens, scanner->tokens_maximum_size);
@@ -56,6 +56,18 @@ size_t push_token_scanner(Scanner *scanner, TokenType token_type,
 
   scanner->tokens[scanner->tokens_size++] = token;
   return scanner->tokens_size;
+}
+
+Scanner *init_scanner(char *source) {
+  Scanner *scanner = calloc(1, sizeof(Scanner));
+  scanner->tokens = calloc(64, sizeof(Token));
+  scanner->tokens_size = 0;
+  scanner->tokens_maximum_size = 64;
+  scanner->source = source;
+  scanner->source_index = 0;
+  scanner->line = 1;
+
+  return scanner;
 }
 
 void scan_scanner(Scanner *scanner) {
@@ -109,7 +121,9 @@ void scan_scanner(Scanner *scanner) {
         character = advance_scanner(scanner);
       }
       var_name[i] = '\0';
-      push_token_scanner(scanner, is_addr ? TT_NUM_VARIABLE_ADDR : TT_NUM_VARIABLE, token_data_string(var_name));
+      push_token_scanner(scanner,
+                         is_addr ? TT_NUM_VARIABLE_ADDR : TT_NUM_VARIABLE,
+                         token_data_string(var_name));
       continue;
     }
     case '\'': {
@@ -172,7 +186,8 @@ void scan_scanner(Scanner *scanner) {
       break;
     default: {
       char msg[64];
-      snprintf(msg, sizeof(msg), "Unrecognized character: '%c' (0x%02X)", character, (unsigned char)character);
+      snprintf(msg, sizeof(msg), "Unrecognized character: '%c' (0x%02X)",
+               character, (unsigned char)character);
       error_scanner(scanner, msg);
       break;
     }
@@ -218,9 +233,11 @@ void function_scanner(Scanner *scanner) {
   }
 
   TokenData *data = token_data_string(name);
-  push_token_scanner(scanner, is_end ? TT_FUNCTION_END : TT_FUNCTION_START, data);
+  push_token_scanner(scanner, is_end ? TT_FUNCTION_END : TT_FUNCTION_START,
+                     data);
 
-  if (is_end) return;
+  if (is_end)
+    return;
 
   skip_whitespace(scanner);
   character = scanner->source[scanner->source_index];
@@ -325,7 +342,8 @@ void function_scanner(Scanner *scanner) {
         continue;
       }
 
-      while (character != ',' && character != ')' && character != '\0' && j < 63) {
+      while (character != ',' && character != ')' && character != '\0' &&
+             j < 63) {
         arg_name[j++] = character;
         advance_scanner(scanner);
         character = scanner->source[scanner->source_index];
@@ -345,11 +363,11 @@ void function_scanner(Scanner *scanner) {
 
 uint8_t char_to_hex(char character) {
   if (character >= '0' && character <= '9') {
-    return character - 0b00110000;
+    return character - '0';
   } else if (character >= 'A' && character <= 'F') {
-    return 10 + character - 0b01000000;
+    return 10 + character - 'A';
   } else if (character >= 'a' && character <= 'f') {
-    return 10 + character - 0b01100000;
+    return 10 + character - 'a';
   } else {
     // easy error checking which is just to see if the returned value is >= 0xF
     return 0xFF;
@@ -357,24 +375,39 @@ uint8_t char_to_hex(char character) {
 }
 
 void error_scanner(Scanner *scanner, char *message) {
-	printf("%s%zu | %s%s\n", CONSOLE_RED, scanner->line, message, CONSOLE_RESET);
+  printf("%s%zu | %s%s\n", CONSOLE_RED, scanner->line, message, CONSOLE_RESET);
 }
 
 static const char *token_type_name(TokenType type) {
   switch (type) {
-  case TT_NUM_VARIABLE:   return "TT_NUM_VARIABLE";
-  case TT_NUM_VARIABLE_ADDR: return "TT_NUM_VARIABLE_ADDR";
-  case TT_STR_VARIABLE:   return "TT_STR_VARIABLE";
-  case TT_EQUALS:         return "TT_EQUALS";
-  case TT_REGISTER:       return "TT_REGISTER";
-  case TT_DATA_SECTION:   return "TT_DATA_SECTION";
-  case TT_TEXT_SECTION:   return "TT_TEXT_SECTION";
-  case TT_FUNCTION_START: return "TT_FUNCTION_START";
-  case TT_FUNCTION_END:   return "TT_FUNCTION_END";
-  case TT_POSITIONING:    return "TT_POSITIONING";
-  case TT_ARGUMENT:       return "TT_ARGUMENT";
-  case TT_HEX_VALUE:      return "TT_HEX_VALUE";
-  case TT_STR_VALUE:      return "TT_STR_VALUE";
+  case TT_NUM_VARIABLE:
+    return "TT_NUM_VARIABLE";
+  case TT_NUM_VARIABLE_ADDR:
+    return "TT_NUM_VARIABLE_ADDR";
+  case TT_STR_VARIABLE:
+    return "TT_STR_VARIABLE";
+  case TT_EQUALS:
+    return "TT_EQUALS";
+  case TT_REGISTER:
+    return "TT_REGISTER";
+  case TT_DATA_SECTION:
+    return "TT_DATA_SECTION";
+  case TT_TEXT_SECTION:
+    return "TT_TEXT_SECTION";
+  case TT_FUNCTION_START:
+    return "TT_FUNCTION_START";
+  case TT_FUNCTION_END:
+    return "TT_FUNCTION_END";
+  case TT_POSITIONING:
+    return "TT_POSITIONING";
+  case TT_ARGUMENT:
+    return "TT_ARGUMENT";
+  case TT_HEX_VALUE:
+    return "TT_HEX_VALUE";
+  case TT_STR_VALUE:
+    return "TT_STR_VALUE";
+  case TT_EOF:
+    return "TT_EOF";
   }
   return "UNKNOWN";
 }
@@ -399,14 +432,18 @@ void print_tokens(Scanner *scanner) {
         printf(" $%X", token->data->data[0]);
         break;
       case TT_HEX_VALUE:
-        printf(" 0x%04X", (uint16_t)(token->data->data[0] | (token->data->data[1] << 8)));
+        printf(" 0x%04X",
+               (uint16_t)(token->data->data[0] | (token->data->data[1] << 8)));
         break;
       case TT_POSITIONING: {
         PositioningData *p = (PositioningData *)token->data->data;
         printf(" {");
-        if (p->all_cores) printf("*");
-        else printf("%X", p->core);
-        if (p->has_position) printf(" %X", p->position);
+        if (p->all_cores)
+          printf("*");
+        else
+          printf("%X", p->core);
+        if (p->has_position)
+          printf(" %X", p->position);
         printf("}");
         break;
       }
@@ -415,5 +452,57 @@ void print_tokens(Scanner *scanner) {
       }
     }
     printf("\n");
+  }
+}
+
+Compiler *init_compiler(Scanner *scanner) {
+  Compiler *compiler = calloc(1, sizeof(Compiler));
+
+  compiler->tokens = scanner->tokens;
+  compiler->tokens_size = scanner->tokens_size;
+
+  return compiler;
+}
+
+size_t push_symbol_scanner(Compiler *compiler, char *name, uint8_t *data,
+                           uint32_t size) {
+  if (compiler->symbols_size >= compiler->symbols_maximum_size) {
+    compiler->symbols_maximum_size *= 2;
+    compiler->symbols =
+        realloc(compiler->symbols, compiler->symbols_maximum_size);
+  }
+
+  Symbol symbol = {
+      .data = data,
+      .name = name,
+      .size = size,
+  };
+
+  compiler->symbols[compiler->symbols_size++] = symbol;
+  return compiler->symbols_maximum_size;
+}
+
+Token *advance_compiler(Compiler *compiler) {
+  if (compiler->tokens_index >= compiler->tokens_size) {
+    // not actually part of the tokens array but returned just to signal to the
+    // compiler that the section is over.
+    return NULL;
+  }
+  return &compiler->tokens[compiler->tokens_index++];
+}
+
+void reset_compiler(Compiler *compiler) { compiler->tokens_index = 0; }
+
+void compile_compiler(Compiler *compiler) {
+  // pass 1: data section
+  Token *token = advance_compiler(compiler);
+
+  // move into the data section
+  while (token->type != TT_DATA_SECTION || token->type != TT_EOF)
+    token = advance_compiler(compiler);
+
+  // parse the text section into the symbol table
+  while (token->type != TT_TEXT_SECTION || token->type != TT_EOF) {
+    token = advance_compiler(compiler);
   }
 }
