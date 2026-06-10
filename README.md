@@ -148,3 +148,7 @@ These are various interrupts that can be triggered by different actions:
 - `01` - Non-Maskable
 - `02` - Mutex Permisson Failure
 - `03` - Signal
+
+## Footnotes
+
+Some AI was used to assist with the development of this project. It is fairly minimal, as I've still written the vast majority of code by hand.
