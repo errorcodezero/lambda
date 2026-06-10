@@ -39,7 +39,7 @@ int main(int argc, char *argv[]) {
     size_t size = ftell(file);
     rewind(file);
     char *source = malloc(size + 1);
-    fread(source, 1, size, file);
+    (void) fread(source, 1, size, file);
     source[size] = '\0';
     fclose(file);
 
@@ -81,7 +81,7 @@ int main(int argc, char *argv[]) {
     size_t size = ftell(file);
     rewind(file);
     uint8_t *buffer = malloc(size * sizeof(uint8_t));
-    fread(buffer, 1, size, file);
+    (void) fread(buffer, 1, size, file);
     fclose(file);
 
     memcpy(computer->memory, buffer, size);
