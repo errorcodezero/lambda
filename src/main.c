@@ -1,3 +1,4 @@
+#include "scanner.h"
 #include "compiler.h"
 #include "computer.h"
 #include "test.h"

@@ -2,7 +2,7 @@ SRC_DIR = src
 BUILD_DIR = build
 EXE = lambda
 
-SRC = main.c core.c instructions.c display.c computer.c console.c arithmetic_instructions.c core_instructions.c bitwise_instructions.c test.c compiler.c
+SRC = main.c core.c instructions.c display.c computer.c console.c arithmetic_instructions.c core_instructions.c bitwise_instructions.c test.c scanner.c compiler.c
 OBJ = $(SRC:%.c=$(BUILD_DIR)/%.o)
 
 CFLAGS += -std=c23 -Wall -Wextra -Werror -pedantic
