@@ -21,6 +21,18 @@ Cool fantasy console that has
 - 4 mutexes per core
 - Little-endian
 
+## Get Started
+
+1. You'll need a C23 compiler and GNU make installed. Note that the version of clang that comes default with MacOS does not support all C23 features as of writing this.
+
+2. Run `make release` in the root directory to build. The finished program should be in the build directory.
+
+3. With one of the example programs in the programs directory(ending in .lmasm), run `lambda build [path to the program]`
+
+4. It should output a file in that directory with the same name ending in .lmb. Run `lambda run [path to compiled binary]`
+
+5. Enjoy!
+
 ## Instructions
 
 This is in hexadecimal and for simplicity, I'm avoiding prefixing all values with "0x". The first value modulus 9 indicates how many bytes precede it for a given instruction. The second indicates an enumerator. The repetition of a character that is not hexadecimal(0-F) does not necessarily indicate the same constant.
