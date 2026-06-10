@@ -9,37 +9,37 @@ static bool is_name_char(char c) {
   return isalnum((unsigned char)c) || c == '_';
 }
 
-static TokenData *token_data_string(const char *str) {
-  TokenData *td = calloc(1, sizeof(TokenData));
-  td->size = strlen(str) + 1;
-  td->bytes = malloc(td->size);
-  memcpy(td->bytes, str, td->size);
-  return td;
+static TokenData *token_data_string(const char *string) {
+  TokenData *token_data = calloc(1, sizeof(TokenData));
+  token_data->size = strlen(string) + 1;
+  token_data->bytes = malloc(token_data->size);
+  memcpy(token_data->bytes, string, token_data->size);
+  return token_data;
 }
 
-static TokenData *token_data_uint8(uint8_t val) {
-  TokenData *td = calloc(1, sizeof(TokenData));
-  td->size = 1;
-  td->bytes = malloc(1);
-  td->bytes[0] = val;
-  return td;
+static TokenData *token_data_uint8(uint8_t value) {
+  TokenData *token_data = calloc(1, sizeof(TokenData));
+  token_data->size = 1;
+  token_data->bytes = malloc(1);
+  token_data->bytes[0] = value;
+  return token_data;
 }
 
-static TokenData *token_data_uint16(uint16_t val) {
-  TokenData *td = calloc(1, sizeof(TokenData));
-  td->size = 2;
-  td->bytes = malloc(2);
-  td->bytes[0] = val & 0xFF;
-  td->bytes[1] = (val >> 8) & 0xFF;
-  return td;
+static TokenData *token_data_uint16_size(uint16_t value, size_t size) {
+  TokenData *token_value = calloc(1, sizeof(TokenData));
+  token_value->size = size;
+  token_value->bytes = malloc(size);
+  for (size_t i = 0; i < size; i++)
+    token_value->bytes[i] = (value >> (i * 8)) & 0xFF;
+  return token_value;
 }
 
-static TokenData *token_data_positioning(PositioningData pos) {
-  TokenData *td = calloc(1, sizeof(TokenData));
-  td->size = sizeof(PositioningData);
-  td->bytes = malloc(td->size);
-  memcpy(td->bytes, &pos, td->size);
-  return td;
+static TokenData *token_data_positioning(PositioningData position) {
+  TokenData *token_data = calloc(1, sizeof(TokenData));
+  token_data->size = sizeof(PositioningData);
+  token_data->bytes = malloc(token_data->size);
+  memcpy(token_data->bytes, &position, token_data->size);
+  return token_data;
 }
 
 size_t push_token_scanner(Scanner *scanner, TokenType token_type,
@@ -160,12 +160,15 @@ void scan_scanner(Scanner *scanner) {
       character = advance_scanner(scanner);
       if (character == 'x' || character == 'X') {
         uint16_t value = 0;
+        size_t digits = 0;
         character = advance_scanner(scanner);
         while (isxdigit((unsigned char)character)) {
           value = (value << 4) | char_to_hex(character);
+          digits++;
           character = advance_scanner(scanner);
         }
-        push_token_scanner(scanner, TT_HEX_VALUE, token_data_uint16(value));
+        push_token_scanner(scanner, TT_HEX_VALUE,
+                           token_data_uint16_size(value, (digits + 1) / 2));
         continue;
       }
       continue;

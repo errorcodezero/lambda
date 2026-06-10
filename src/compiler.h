@@ -1,12 +1,12 @@
 #ifndef INCLUDE_SRC_COMPILER_H_
 #define INCLUDE_SRC_COMPILER_H_
 
+#include "byte_array.h"
 #include "scanner.h"
 
 typedef struct Symbol {
   char *name;
-  uint8_t *data;
-  uint32_t size;
+  ByteArray bytes;
   // if this is false, core and interrupt are useless.
   bool function;
   // value above 5 means it applies to all cores
@@ -28,6 +28,7 @@ Compiler *init_compiler(Scanner *scanner);
 size_t push_symbol_compiler(Compiler *compiler, Symbol symbol);
 Token *advance_compiler(Compiler *compiler);
 void reset_compiler(Compiler *compiler);
+void token_value_compiler(Compiler *compiler, Token *token, ByteArray *arr);
 void compile_compiler(Compiler *compiler);
 void print_symbols_compiler(Compiler *compiler);
 void free_compiler(Compiler *compiler);
