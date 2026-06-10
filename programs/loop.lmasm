@@ -1,0 +1,12 @@
+#data
+
+#text
+
+[start] {0} ()
+@LDI 0x00 0x000A
+@LDI 0x01 0x0000
+@INC 0x11
+@DEC 0x01
+@AJMPIGD 0x010008
+@HLT
+[/start]

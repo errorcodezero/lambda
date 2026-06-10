@@ -25,7 +25,7 @@ static TokenData *token_data_uint8(uint8_t value) {
   return token_data;
 }
 
-static TokenData *token_data_uint16_size(uint16_t value, size_t size) {
+static TokenData *token_data_from_uint32(uint32_t value, size_t size) {
   TokenData *token_value = calloc(1, sizeof(TokenData));
   token_value->size = size;
   token_value->bytes = malloc(size);
@@ -159,7 +159,7 @@ void scan_scanner(Scanner *scanner) {
     case '0': {
       character = advance_scanner(scanner);
       if (character == 'x' || character == 'X') {
-        uint16_t value = 0;
+        uint32_t value = 0;
         size_t digits = 0;
         character = advance_scanner(scanner);
         while (isxdigit((unsigned char)character)) {
@@ -168,7 +168,7 @@ void scan_scanner(Scanner *scanner) {
           character = advance_scanner(scanner);
         }
         push_token_scanner(scanner, TT_HEX_VALUE,
-                           token_data_uint16_size(value, (digits + 1) / 2));
+                           token_data_from_uint32(value, (digits + 1) / 2));
         continue;
       }
       continue;
