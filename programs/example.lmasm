@@ -1,36 +1,46 @@
 #data
 
-/ comment
+/ A numeric variable stores raw bytes in the data section.
+/ @name  0xVALUE   -> defines a symbol "name" with VALUE as its data.
+/ The VALUE hex digits determine the byte count: 0xFFFF = 2 bytes (FF FF).
 @variable 0xFFFF
-'string "string"
 
-/ string variables are denoted with the single quote notation above while number variables are denoted with the @ sign notation
-/ instruction shorthands(such as LDI) are actually just predefined constants because i'm really nice to users
+/ A string variable stores null-terminated text.
+/ 'name "text"   -> defines a symbol "name" with "text\0" as its data.
+'string "string"
 
 #text
 
-/ start function
-/ in the second set of brackets, the first number denotes a core and the second number denotes where the function pointer belongs
-/ the idea behind this is that you can easily declare interrupt handlers by declaring what core its for and how it works(where empty is just the start function)
-/ the third set of square brackets is for arguments which will be accessible as constants
+/ Function declaration: [name] {core position} (arguments)
+/   core     - which core this handler runs on (0-3, or * for all)
+/   position - which interrupt vector slot (0-64) or empty for start function
+/   ()       - named arguments (future use, parsed but not yet resolved)
+/ A function with no position (like {0}) is a start function (interrupt > 64).
+/ The compiler writes its address into the instruction vector at 0x000000.
 
 [start] {0} ()
+/ LDI - Load Immediate (4 bytes: 32 0R NN NN)
+/ Loads a 16-bit value into a register.
+/   $0   = register 0 (low nibble of the "0R" byte)
+/   @variable = symbol lookup, expands to 0xFF 0xFF
 @LDI $0 @variable
 
-/ @& gives the address of a variable instead of its inline value
-/ useful for loading from data memory with RLD/RLM
-/ @RLD $1 @&variable
+/ @& gives the address of a variable instead of its inline value,
+/ useful for loading from data memory with RLD/RLM (see README).
+/ RLD - Relative Load (4 bytes: 39 SR MM MM)
+/   Example: @RLD $1 @&variable
+/   $1         = destination register
+/   @&variable = address of the variable in memory
 
-/ dollar sign denotes a register.
-/ constants are either written as numbers or strings
-
+/ HLT - Halt (1 byte: 00)
 @HLT
 [/start]
 
-/ the line above signals the end of the function
-
-/ The really cool part about this is that the asterisk denotes that the same function be used for all cores.
-/ An interrupt in your system that uses a common handler for all cores can easily be set up as such! 
+/ Mutex Permission Failure interrupt handler.
+/ The asterisk (*) means this handler applies to ALL cores.
+/ The position 2 means it hooks interrupt vector 2.
+/ When a mutex permission failure occurs on any core,
+/ the CPU will dispatch to this handler.
 [mutex_permission_failure] [* 2] ()
 @HLT
 [/mutex_permission_failure]

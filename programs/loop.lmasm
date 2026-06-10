@@ -1,12 +1,37 @@
+/ Loop test: increments R1 until R0 reaches zero.
+/ Equivalent to test_loop() in test.c.
+/ Expected result: R0 = 0, R1 = 10
+
 #data
 
 #text
 
 [start] {0} ()
+/ LDI R0, 10 (4 bytes: 32 00 0A 00)
+/   byte 1: 0x00 = (0 << 4) | R0  -> register 0
+/   bytes 2-3: 0x000A = 10 in little-endian
 @LDI 0x00 0x000A
+
+/ LDI R1, 0 (4 bytes: 32 01 00 00)
+/   byte 1: 0x01 = (0 << 4) | R1  -> register 1
 @LDI 0x01 0x0000
+
+/ --- loop_start (address 0x010008) ---
+
+/ INC R1, 1 (2 bytes: 10 11)
+/   byte 1: 0x11 = (R1 << 4) | 1  -> increment register 1 by 1
 @INC 0x11
+
+/ DEC R0, 1 (2 bytes: 11 01)
+/   byte 1: 0x01 = (R0 << 4) | 1  -> decrement register 0 by 1
 @DEC 0x01
+
+/ AJMPIGD - Absolute Jump If Greater Direct (4 bytes: 35 MM MM MM)
+/ Jumps to 0x010008 (loop_start) if the result was > 0.
+/ After DEC, if R0 is still positive (not zero, not negative),
+/ the jump is taken. When R0 reaches 0, fall through to HLT.
 @AJMPIGD 0x010008
+
+/ HLT (1 byte: 00)
 @HLT
 [/start]
