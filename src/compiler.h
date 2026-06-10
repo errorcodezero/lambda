@@ -22,6 +22,7 @@ typedef struct Compiler {
   Symbol *symbols;
   size_t symbols_size;
   size_t symbols_maximum_size;
+  ByteArray output;
 } Compiler;
 
 Compiler *init_compiler(Scanner *scanner);

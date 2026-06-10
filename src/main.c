@@ -1,6 +1,6 @@
-#include "scanner.h"
 #include "compiler.h"
 #include "computer.h"
+#include "scanner.h"
 #include "test.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -10,7 +10,8 @@ int main(int argc, char *argv[]) {
   Computer *computer = calloc(1, sizeof(Computer));
   if (argc != 3) {
     free(computer);
-    printf("Usage\n%s test [test name]\n%s run [file]\n", argv[0], argv[0]);
+    printf("Usage\n%s test [test name]\n%s run [file]\n%s build [file]\n",
+           argv[0], argv[0], argv[0]);
     return EXIT_FAILURE;
   }
   if (!computer) {
@@ -27,7 +28,7 @@ int main(int argc, char *argv[]) {
     } else if (strcmp(argv[2], "main")) {
       test(computer);
     }
-  } else if (strcmp(argv[1], "compile") == 0) {
+  } else if (strcmp(argv[1], "build") == 0) {
     FILE *file = fopen(argv[2], "rb");
     if (!file) {
       fprintf(stderr, "Could not open file: %s\n", argv[2]);
@@ -53,11 +54,25 @@ int main(int argc, char *argv[]) {
       print_symbols_compiler(compiler);
     }
 
+    size_t name_len = strlen(argv[2]);
+    char *out_name = malloc(name_len + 5);
+    memcpy(out_name, argv[2], name_len);
+    char *dot = strrchr(out_name, '.');
+    if (dot)
+      name_len = dot - out_name;
+    memcpy(out_name + name_len, ".lmb", 5);
+    FILE *out = fopen(out_name, "wb");
+    if (out) {
+      fwrite(compiler->output.data, 1, compiler->output.size, out);
+      fclose(out);
+    }
+    free(out_name);
+
     free_compiler(compiler);
     free_scanner(scanner);
   } else if (strcmp(argv[1], "run") == 0) {
     if (argc != 3) {
-      printf("Usage\n%s test [test name]\n%s run [file]\n%s compile [file]\n",
+      printf("Usage\n%s test [test name]\n%s run [file]\n%s build [file]\n",
              argv[0], argv[0], argv[0]);
       return EXIT_FAILURE;
     }
@@ -81,7 +96,8 @@ int main(int argc, char *argv[]) {
     }
 
   } else {
-    printf("Usage\n%s test [test name]\n%s run [file]\n", argv[0], argv[0]);
+    printf("Usage\n%s test [test name]\n%s run [file]\n%s build [file]\n",
+           argv[0], argv[0], argv[0]);
   }
 
   free(computer);

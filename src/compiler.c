@@ -49,6 +49,8 @@ size_t push_symbol_compiler(Compiler *compiler, Symbol symbol) {
   return compiler->symbols_size;
 }
 
+static void emit_output_compiler(Compiler *compiler);
+
 void compile_compiler(Compiler *compiler) {
   // pass 1: data section
   Token *token = advance_compiler(compiler);
@@ -125,6 +127,46 @@ void compile_compiler(Compiler *compiler) {
       push_symbol_compiler(compiler, symbol);
     }
   }
+  emit_output_compiler(compiler);
+}
+
+static void write_3byte(ByteArray *array, uint32_t offset, uint32_t address) {
+  array->data[offset]     =  address        & 0xFF;
+  array->data[offset + 1] = (address >> 8)  & 0xFF;
+  array->data[offset + 2] = (address >> 16) & 0xFF;
+}
+
+static void emit_output_compiler(Compiler *compiler) {
+  // Zero-fill up to 0x10000 (covers vector tables)
+  compiler->output = init_byte_array();
+  while (compiler->output.size < 0x10000)
+    push_byte_array(&compiler->output, 0);
+
+  uint32_t address = 0x10000;
+  for (size_t i = 0; i < compiler->symbols_size; i++) {
+    Symbol *symbol = &compiler->symbols[i];
+
+    if (symbol->function) {
+      if (symbol->interrupt > 64) {
+        if (symbol->core >= 6) {
+          for (uint32_t c = 0; c < 4; c++)
+            write_3byte(&compiler->output, c * 3, address);
+        } else {
+          write_3byte(&compiler->output, symbol->core * 3, address);
+        }
+      } else {
+        write_3byte(&compiler->output, 0x00000C + symbol->interrupt * 3, address);
+      }
+
+      for (size_t j = 0; j < symbol->bytes.size; j++)
+        push_byte_array(&compiler->output, symbol->bytes.data[j]);
+      address += symbol->bytes.size;
+    } else {
+      for (size_t j = 0; j < symbol->bytes.size; j++)
+        push_byte_array(&compiler->output, symbol->bytes.data[j]);
+      address += symbol->bytes.size;
+    }
+  }
 }
 
 void token_value_compiler(Compiler *compiler, Token *token, ByteArray *arr) {
@@ -153,6 +195,7 @@ void token_value_compiler(Compiler *compiler, Token *token, ByteArray *arr) {
 void free_compiler(Compiler *compiler) {
   for (size_t i = 0; i < compiler->symbols_size; i++)
     free_byte_array(&compiler->symbols[i].bytes);
+  free_byte_array(&compiler->output);
   free(compiler->symbols);
   free(compiler);
 }
