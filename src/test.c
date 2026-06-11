@@ -232,17 +232,15 @@ void test(Computer *computer) {
   computer->memory[write_addr++] = 0x12;
   computer->memory[write_addr++] = 0x02;
 
-  // AJMPIZD: condition FALSE (Z=0) -> fall through
-  computer->memory[write_addr++] = 0x33; // AJMPIZD
-  computer->memory[write_addr++] = 0x00; // target = 0x300000
+  // RJMPIZD: condition FALSE (Z=0) -> fall through
+  computer->memory[write_addr++] = 0x22; // RJMPIZD
+  computer->memory[write_addr++] = 0x00; // offset = 0 (irrelevant, won't jump)
   computer->memory[write_addr++] = 0x00;
-  computer->memory[write_addr++] = 0x30;
 
-  // AJMPIGD: condition TRUE (Z=0, S=0) -> jump to uninit memory -> HLT
-  computer->memory[write_addr++] = 0x35; // AJMPIGD
-  computer->memory[write_addr++] = 0x00; // target = 0x300100
-  computer->memory[write_addr++] = 0x01;
-  computer->memory[write_addr++] = 0x30;
+  // RJMPIGD: condition TRUE (Z=0, S=0) -> jump forward to HLT
+  computer->memory[write_addr++] = 0x24; // RJMPIGD
+  computer->memory[write_addr++] = 0x03; // offset = +3 (past this instruction to HLT)
+  computer->memory[write_addr++] = 0x00;
 
   computer->memory[write_addr++] = 0x00; // HLT (consumed by auto-increment)
 
