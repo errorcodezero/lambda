@@ -5,6 +5,7 @@
 
 void setup_core_instructions(Computer *computer);
 void HLT_handler(Computer *computer, uint8_t core_id);
+void BNKS_handler(Computer *computer, uint8_t core_id);
 void LDI_handler(Computer *computer, uint8_t core_id);
 void RLD_handler(Computer *computer, uint8_t core_id);
 void ALD_handler(Computer *computer, uint8_t core_id);

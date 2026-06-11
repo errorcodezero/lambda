@@ -6,6 +6,7 @@
 
 void setup_core_instructions(Computer *computer) {
   computer->instructions[I_HLT] = HLT_handler;
+  computer->instructions[I_BNKS] = BNKS_handler;
   computer->instructions[I_LDI] = LDI_handler;
   computer->instructions[I_RLD] = RLD_handler;
   computer->instructions[I_ALD] = ALD_handler;
@@ -40,6 +41,13 @@ void HLT_handler(Computer *computer, uint8_t core_id) {
     printf("%sCOMPUTER STOPPED%s\n", CONSOLE_BLUE, CONSOLE_RESET);
     computer->halted = true;
   }
+}
+
+void BNKS_handler(Computer *computer, uint8_t core_id) {
+  Core *core = &computer->cores[core_id];
+  core->registers[BANK_REGISTER] = (core->instruction_pointer >> 16);
+  console_print_core(core_id, core->instruction_pointer);
+  printf("BNKS\n");
 }
 
 void LDI_handler(Computer *computer, uint8_t core_id) {

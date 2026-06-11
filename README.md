@@ -41,6 +41,7 @@ This is in hexadecimal and for simplicity, I'm avoiding prefixing all values wit
 
 - [X] `HLT` - Halt - `00`
 - `RET` - Return - `01`
+- [X] `BNKS` - Bank Set - `02`
 
 ### 2 Byte Instructions 
 
