@@ -20,6 +20,12 @@ void setup_core_instructions(Computer *computer) {
   computer->instructions[I_AJMPIGI] = AJMPIGI_handler;
   computer->instructions[I_AJMPILD] = AJMPILD_handler;
   computer->instructions[I_AJMPILI] = AJMPILI_handler;
+  // computer->instructions[I_RJMPIZD] = RJMPIZD_handler;
+  // computer->instructions[I_RJMPIZI] = RJMPIZI_handler;
+  // computer->instructions[I_RJMPIGD] = RJMPIGD_handler;
+  // computer->instructions[I_RJMPIGI] = RJMPIGI_handler;
+  // computer->instructions[I_RJMPILD] = RJMPILD_handler;
+  // computer->instructions[I_RJMPILI] = RJMPILI_handler;
 }
 
 void HLT_handler(Computer *computer, uint8_t core_id) {
@@ -304,3 +310,80 @@ void AJMPILI_handler(Computer *computer, uint8_t core_id) {
   console_print_core(core_id, computer->cores[core_id].instruction_pointer);
   printf("AJMPILI MEMORY ADDRESS 0x%X\n", memory);
 }
+
+// static void relative_jump_helper(Computer *computer, Core *core,
+//                                  bool indirection, bool condition) {
+//   if (!condition)
+//     return;
+//   int16_t offset = (int16_t)memory_get_16(computer, core->instruction_pointer + 1);
+//   if (indirection)
+//     offset = (int16_t)memory_get_16(computer, core->instruction_pointer + offset + 2);
+//   core->instruction_pointer += offset;
+//   core->jumped = true;
+// }
+//
+// void RJMPIZD_handler(Computer *computer, uint8_t core_id) {
+//   Core *core = &computer->cores[core_id];
+//   uint8_t zero_flag = core->registers[STATUS_REGISTER] & ZERO_FLAG;
+//   uint8_t sign_flag = core->registers[STATUS_REGISTER] & SIGN_FLAG;
+//
+//   relative_jump_helper(computer, core, false, (zero_flag && !sign_flag));
+//
+//   console_print_core(core_id, computer->cores[core_id].instruction_pointer);
+//   printf("RJMPIZD\n");
+// }
+//
+// void RJMPIZI_handler(Computer *computer, uint8_t core_id) {
+//   Core *core = &computer->cores[core_id];
+//   uint8_t zero_flag = core->registers[STATUS_REGISTER] & ZERO_FLAG;
+//   uint8_t sign_flag = core->registers[STATUS_REGISTER] & SIGN_FLAG;
+//
+//   relative_jump_helper(computer, core, true, (zero_flag && !sign_flag));
+//
+//   console_print_core(core_id, computer->cores[core_id].instruction_pointer);
+//   printf("RJMPIZI\n");
+// }
+//
+// void RJMPIGD_handler(Computer *computer, uint8_t core_id) {
+//   Core *core = &computer->cores[core_id];
+//   uint8_t zero_flag = core->registers[STATUS_REGISTER] & ZERO_FLAG;
+//   uint8_t sign_flag = core->registers[STATUS_REGISTER] & SIGN_FLAG;
+//
+//   relative_jump_helper(computer, core, false, (!zero_flag && !sign_flag));
+//
+//   console_print_core(core_id, computer->cores[core_id].instruction_pointer);
+//   printf("RJMPIGD\n");
+// }
+//
+// void RJMPIGI_handler(Computer *computer, uint8_t core_id) {
+//   Core *core = &computer->cores[core_id];
+//   uint8_t zero_flag = core->registers[STATUS_REGISTER] & ZERO_FLAG;
+//   uint8_t sign_flag = core->registers[STATUS_REGISTER] & SIGN_FLAG;
+//
+//   relative_jump_helper(computer, core, true, (!zero_flag && !sign_flag));
+//
+//   console_print_core(core_id, computer->cores[core_id].instruction_pointer);
+//   printf("RJMPIGI\n");
+// }
+//
+// void RJMPILD_handler(Computer *computer, uint8_t core_id) {
+//   Core *core = &computer->cores[core_id];
+//   uint8_t zero_flag = core->registers[STATUS_REGISTER] & ZERO_FLAG;
+//   uint8_t sign_flag = core->registers[STATUS_REGISTER] & SIGN_FLAG;
+//
+//   relative_jump_helper(computer, core, false, (!zero_flag && sign_flag));
+//
+//   console_print_core(core_id, computer->cores[core_id].instruction_pointer);
+//   printf("RJMPILD\n");
+// }
+//
+// void RJMPILI_handler(Computer *computer, uint8_t core_id) {
+//   Core *core = &computer->cores[core_id];
+//   uint8_t zero_flag = core->registers[STATUS_REGISTER] & ZERO_FLAG;
+//   uint8_t sign_flag = core->registers[STATUS_REGISTER] & SIGN_FLAG;
+//
+//   relative_jump_helper(computer, core, true, (!zero_flag && sign_flag));
+//
+//   console_print_core(core_id, computer->cores[core_id].instruction_pointer);
+//   printf("RJMPILI\n");
+// }
