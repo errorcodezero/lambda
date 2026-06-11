@@ -70,12 +70,12 @@ This is in hexadecimal and for simplicity, I'm avoiding prefixing all values wit
 
 - [X] `ADDB` - Add One Half Byte - `20 RI II`
 - [X] `SUBB` - Subtract One Half Byte - `21 RI II`
-- `RJMPIZD` - Relative Jump If Zero Direct - `22 MM MM`
-- `RJMPIZI` - Relative Jump If Zero Indirect - `23 MM MM`
-- `RJMPIGD` - Relative Jump If Greater Direct - `24 MM MM`
-- `RJMPIGI` - Relative Jump If Greater Indirect - `25 MM MM`
-- `RJMPILD` - Relative Jump If Lesser Direct - `26 MM MM`
-- `RJMPILI` - Relative Jump If Lesser Indirect - `27 MM MM`
+- [X] `RJMPIZD` - Relative Jump If Zero Direct - `22 MM MM`
+- [X] `RJMPIZI` - Relative Jump If Zero Indirect - `23 MM MM`
+- [X] `RJMPIGD` - Relative Jump If Greater Direct - `24 MM MM`
+- [X] `RJMPIGI` - Relative Jump If Greater Indirect - `25 MM MM`
+- [X] `RJMPILD` - Relative Jump If Lesser Direct - `26 MM MM`
+- [X] `RJMPILI` - Relative Jump If Lesser Indirect - `27 MM MM`
 - [X] `ADDRR` - Add Registers - `2A SR RR`\*\*\*
 - [X] `SUBRR` - Subtract Registers - `2B SR RR`\*\*\*
 - [X] `XANOR` - Bitwise AND/OR/XOR/NAND/NOR/XNOR Registers - `2C SR RR`** - 0 for `S` will make this bitwise AND, 1 will make this bitwise OR, 2 will make this bitwise XOR, 3 will make this bitwise NAND, 4 will make this bitwise NOR, 5 will make this bitwise XNOR
